@@ -15,13 +15,13 @@ import { getAnalytics } from "firebase/analytics";
 import { FirebaseOptions } from "firebase/app";
 
 const config: FirebaseOptions = {
-  apiKey: "AIzaSyB4bAJY0ae3JLnHp5vQV-YKbD4CV-XKxTY",
-  authDomain: "getincredible.com",
-  projectId: "incred-app-dev-6987b",
-  storageBucket: "incred-app-dev-6987b.appspot.com",
-  messagingSenderId: "976336889830",
-  appId: "1:846789567031:web:04a123e9db85bc20f095b2",
-  measurementId: "G-RGXRH68BK9",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 const FirebaseProviderSDKs: FC<{ children: ReactNode }> = ({ children }) => {
