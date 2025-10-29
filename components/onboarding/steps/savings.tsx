@@ -2,9 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import { BackButton } from "../back-button";
+import { useOnboarding } from "@/contexts/onboarding-context";
 
 export function Savings() {
   const router = useRouter();
+  const {
+    minimumPayoffSimulation,
+    customPayoffSimulation1_5x,
+    customPayoffSimulation2x,
+    selectedMonthlyPayment,
+  } = useOnboarding();
 
   const handleContinue = () => {
     router.push("/onboarding/main-goal");
@@ -16,6 +23,69 @@ export function Savings() {
     "Automated payments",
     "Progress you can actually see",
   ];
+
+  // Determine which simulation to use based on selected monthly payment
+  let selectedSimulation = null;
+
+  if (minimumPayoffSimulation) {
+    const minPayment = minimumPayoffSimulation.minimum_payment;
+    const payment1_5x = Math.round(minPayment * 1.5);
+    const payment2x = Math.round(minPayment * 2);
+
+    if (selectedMonthlyPayment === payment1_5x && customPayoffSimulation1_5x) {
+      selectedSimulation = customPayoffSimulation1_5x;
+    } else if (
+      selectedMonthlyPayment === payment2x &&
+      customPayoffSimulation2x
+    ) {
+      selectedSimulation = customPayoffSimulation2x;
+    } else {
+      // If minimum payment selected, default to showing 1.5x savings
+      selectedSimulation = customPayoffSimulation1_5x;
+    }
+  }
+
+  // Debug logging
+  console.log("=== SAVINGS CALCULATION DEBUG ===");
+  console.log("Selected Monthly Payment:", selectedMonthlyPayment);
+  console.log("Minimum Payoff Simulation:", minimumPayoffSimulation);
+  console.log("Custom Payoff 1.5x:", customPayoffSimulation1_5x);
+  console.log("Custom Payoff 2x:", customPayoffSimulation2x);
+  console.log("Selected Simulation:", selectedSimulation);
+
+  // Calculate interest savings: minimum payoff interest - selected custom payoff interest
+  console.log(
+    "Minimum Payoff Interest:",
+    minimumPayoffSimulation?.interest_paid
+  );
+  console.log(
+    "Selected Simulation Interest:",
+    selectedSimulation?.interest_paid
+  );
+  const interestSaved =
+    selectedSimulation && minimumPayoffSimulation
+      ? Math.max(
+          0,
+          Math.round(
+            minimumPayoffSimulation.interest_paid -
+              selectedSimulation.interest_paid
+          )
+        )
+      : 0;
+
+  // Calculate months saved: minimum payoff months - selected custom payoff months
+  const monthsSaved =
+    selectedSimulation && minimumPayoffSimulation
+      ? Math.max(
+          0,
+          minimumPayoffSimulation.months_to_clear -
+            selectedSimulation.months_to_clear
+        )
+      : 0;
+
+  console.log("Interest Saved:", interestSaved);
+  console.log("Months Saved:", monthsSaved);
+  console.log("=================================");
 
   return (
     <div className="flex flex-col gap-8 max-w-[600px] w-full">
@@ -37,12 +107,12 @@ export function Savings() {
         <div className="flex flex-col gap-4">
           <div className="border-2 border-neon-lime bg-neon-lime/10 rounded-3xl p-5 pt-6 pb-8 flex flex-col gap-2 items-center">
             <p className="font-sora font-extrabold text-[32px] leading-normal text-carbon text-center">
-              £4,830 🎉
+              £{interestSaved.toLocaleString()} 🎉
             </p>
             <div className="flex flex-col gap-3 items-center">
               <div className="bg-neon-lime px-3 py-1 rounded-[14px]">
                 <p className="font-satoshi font-bold text-base leading-6 text-carbon">
-                  Pay off 18 months faster
+                  Pay off {monthsSaved} months faster
                 </p>
               </div>
               <p className="font-satoshi font-medium text-base leading-6 text-carbon text-center">
@@ -61,8 +131,20 @@ export function Savings() {
           {benefits.map((benefit, index) => (
             <div key={index} className="flex items-start gap-2">
               <div className="bg-neon-lime rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M2 7L6 11L12 3" stroke="#142a31" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M2 7L6 11L12 3"
+                    stroke="#142a31"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </div>
               <p className="font-satoshi font-bold text-base leading-6 text-carbon">
@@ -79,8 +161,20 @@ export function Savings() {
         className="bg-carbon hover:bg-carbon/90 text-white font-sora font-extrabold text-base uppercase px-8 h-12 rounded-[48px] flex items-center justify-center gap-2 transition-colors"
       >
         Continue
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M9 18L15 12L9 6"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       </button>
     </div>
