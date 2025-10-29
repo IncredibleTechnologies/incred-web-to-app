@@ -1,38 +1,96 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { BackButton } from "../back-button";
-
-interface Card {
-  id: string;
-  name: string;
-  logo: string;
-  selected: boolean;
-}
+import { useOnboarding } from "@/contexts/onboarding-context";
 
 export function CreditCards() {
   const router = useRouter();
+  const {
+    availableCards,
+    totalBalance,
+    selectedCards,
+    setSelectedCards,
+    setMinimumPayoffSimulation,
+  } = useOnboarding();
+
   const [searchQuery, setSearchQuery] = useState("");
-  const [cards, setCards] = useState<Card[]>([
-    { id: "nationwide", name: "Nationwide", logo: "🏦", selected: true },
-    { id: "capital-one", name: "Capital One", logo: "💳", selected: false },
-    { id: "virgin", name: "Virgin Money", logo: "🎯", selected: false },
-    { id: "rbs", name: "Royal Bank of Scotland", logo: "🏛️", selected: false },
-    { id: "starling", name: "Starling", logo: "⭐", selected: true },
-    { id: "lloyds", name: "Lloyds", logo: "🐴", selected: true },
-    { id: "mbna", name: "MBNA", logo: "💼", selected: false },
-    { id: "hsbc", name: "HSBC", logo: "🔺", selected: false },
-  ]);
+  const [selectedProviders, setSelectedProviders] = useState<Set<string>>(
+    new Set(selectedCards.map((card) => card.provider))
+  );
+  const [isLoading, setIsLoading] = useState(false);
 
-  const selectedCount = cards.filter((card) => card.selected).length;
+  const selectedCount = selectedProviders.size;
 
-  const toggleCard = (id: string) => {
-    setCards(cards.map((card) => (card.id === id ? { ...card, selected: !card.selected } : card)));
+  // Filter cards based on search query
+  const filteredCards = useMemo(() => {
+    if (!searchQuery.trim()) return availableCards;
+    const query = searchQuery.toLowerCase();
+    return availableCards.filter((card) => card.name.toLowerCase().includes(query));
+  }, [availableCards, searchQuery]);
+
+  const toggleCard = (provider: string) => {
+    const newSelected = new Set(selectedProviders);
+    if (newSelected.has(provider)) {
+      newSelected.delete(provider);
+    } else {
+      newSelected.add(provider);
+    }
+    setSelectedProviders(newSelected);
   };
 
-  const handleContinue = () => {
-    router.push("/onboarding/monthly-payment");
+  const handleContinue = async () => {
+    if (selectedCount === 0) return;
+
+    setIsLoading(true);
+
+    try {
+      // Calculate balance per card (split evenly for now)
+      const balancePerCard = totalBalance / selectedCount;
+
+      // Create cards array for API call
+      const cards = Array.from(selectedProviders).map((provider) => ({
+        provider,
+        balance: balancePerCard,
+        interest_rate: 0.24, // Default 24% APR
+        minimum_payment: 0,
+        monthly_payment: 0,
+      }));
+
+      // Save selected cards to context
+      setSelectedCards(cards);
+
+      // Call simulate-minimum-payoff API
+      const response = await fetch("https://api.getincredible.com/user/simulate-minimum-payoff", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json",
+        },
+        body: JSON.stringify({
+          cards,
+          strategy: "AVALANCHE",
+          budget: 0,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to simulate minimum payoff");
+      }
+
+      const simulation = await response.json();
+      console.log("Minimum payoff simulation response:", simulation);
+      setMinimumPayoffSimulation(simulation);
+
+      router.push("/onboarding/monthly-payment");
+    } catch (error) {
+      console.error("Failed to simulate minimum payoff:", error);
+      // Still navigate even if API fails
+      router.push("/onboarding/monthly-payment");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -65,28 +123,47 @@ export function CreditCards() {
 
           {/* Cards List */}
           <div className="flex flex-col overflow-y-auto">
-            {cards.map((card) => (
-              <button
-                key={card.id}
-                onClick={() => toggleCard(card.id)}
-                className="flex items-center gap-2 py-2 border-b border-slate-100/20 hover:bg-slate-100/5 transition-colors"
-              >
-                {card.selected && (
-                  <div className="bg-neon-lime rounded-lg w-6 h-6 flex items-center justify-center">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M2 7L6 11L12 3" stroke="#142a31" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                )}
-                {!card.selected && <div className="w-6 h-6" />}
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-900 to-blue-700 flex items-center justify-center text-xl">
-                  {card.logo}
-                </div>
-                <span className="font-satoshi font-bold text-base leading-6 text-carbon">
-                  {card.name}
-                </span>
-              </button>
-            ))}
+            {filteredCards.length === 0 ? (
+              <p className="font-satoshi font-medium text-base leading-6 text-slate-100 text-center py-8">
+                {availableCards.length === 0
+                  ? "Loading credit cards..."
+                  : "No cards found matching your search"}
+              </p>
+            ) : (
+              filteredCards.map((card) => (
+                <button
+                  key={card.provider}
+                  onClick={() => toggleCard(card.provider)}
+                  className="flex items-center gap-2 py-2 border-b border-slate-100/20 hover:bg-slate-100/5 transition-colors"
+                >
+                  {selectedProviders.has(card.provider) && (
+                    <div className="bg-neon-lime rounded-lg w-6 h-6 flex items-center justify-center">
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 7L6 11L12 3" stroke="#142a31" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                  )}
+                  {!selectedProviders.has(card.provider) && <div className="w-6 h-6" />}
+
+                  {/* Logo */}
+                  {card.logo ? (
+                    <img
+                      src={card.logo}
+                      alt={card.name}
+                      className="w-10 h-10 rounded-full object-cover bg-gradient-to-br from-blue-900 to-blue-700"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-900 to-blue-700 flex items-center justify-center text-white text-xs font-bold">
+                      {card.name.substring(0, 2).toUpperCase()}
+                    </div>
+                  )}
+
+                  <span className="font-satoshi font-bold text-base leading-6 text-carbon">
+                    {card.name}
+                  </span>
+                </button>
+              ))
+            )}
           </div>
         </div>
 
@@ -97,12 +174,19 @@ export function CreditCards() {
       {/* Continue Button */}
       <button
         onClick={handleContinue}
-        className="bg-carbon hover:bg-carbon/90 text-white font-sora font-extrabold text-base uppercase px-8 h-12 rounded-[48px] flex items-center justify-center gap-2 transition-colors"
+        disabled={selectedCount === 0 || isLoading}
+        className="bg-carbon hover:bg-carbon/90 text-white font-sora font-extrabold text-base uppercase px-8 h-12 rounded-[48px] flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Continue with {selectedCount} cards
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+        {isLoading ? (
+          "Loading..."
+        ) : (
+          <>
+            Continue with {selectedCount} {selectedCount === 1 ? "card" : "cards"}
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </>
+        )}
       </button>
     </div>
   );

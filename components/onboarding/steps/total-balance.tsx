@@ -1,16 +1,60 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { BackButton } from "../back-button";
+import { useOnboarding, CreditCardOption } from "@/contexts/onboarding-context";
 
 export function TotalBalance() {
   const router = useRouter();
-  const [balance, setBalance] = useState(5000);
+  const { totalBalance, setTotalBalance, setAvailableCards } = useOnboarding();
+  const [balance, setBalance] = useState(totalBalance);
+  const [isDragging, setIsDragging] = useState(false);
+  const sliderRef = useRef<HTMLDivElement>(null);
   const minBalance = 1000;
   const maxBalance = 30000;
 
+  // Fetch credit card data on mount
+  useEffect(() => {
+    const fetchCreditCards = async () => {
+      try {
+        const [namesResponse, logosResponse] = await Promise.all([
+          fetch("https://api.getincredible.com/connections/credit-cards-names", {
+            headers: { accept: "application/json" },
+          }),
+          fetch("https://api.getincredible.com/connections/credit-cards-logos", {
+            headers: { accept: "application/json" },
+          }),
+        ]);
+
+        if (!namesResponse.ok || !logosResponse.ok) {
+          throw new Error("Failed to fetch credit card data");
+        }
+
+        const namesData = await namesResponse.json();
+        const logosData = await logosResponse.json();
+
+        // The API returns an object where keys are provider IDs and values contain {title, subtitle}
+        const cards: CreditCardOption[] = Object.entries(namesData).map(([providerId, data]: [string, any]) => ({
+          provider: providerId,
+          name: data.title,
+          logo: logosData[providerId] || "",
+        }));
+
+        // Sort alphabetically by name
+        cards.sort((a, b) => a.name.localeCompare(b.name));
+
+        setAvailableCards(cards);
+      } catch (error) {
+        console.error("Failed to fetch credit cards:", error);
+      }
+    };
+
+    fetchCreditCards();
+  }, [setAvailableCards]);
+
   const handleContinue = () => {
+    setTotalBalance(balance);
     router.push("/onboarding/credit-cards");
   };
 
@@ -27,6 +71,61 @@ export function TotalBalance() {
   };
 
   const sliderPercentage = ((balance - minBalance) / (maxBalance - minBalance)) * 100;
+
+  const handleSliderChange = (clientX: number) => {
+    if (!sliderRef.current) return;
+
+    const rect = sliderRef.current.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+    const newBalance = Math.round((percentage / 100) * (maxBalance - minBalance) + minBalance);
+
+    // Round to nearest 100
+    const roundedBalance = Math.round(newBalance / 100) * 100;
+    setBalance(Math.max(minBalance, Math.min(maxBalance, roundedBalance)));
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    handleSliderChange(e.clientX);
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (isDragging) {
+      handleSliderChange(e.clientX);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    handleSliderChange(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (isDragging && e.touches.length > 0) {
+      handleSliderChange(e.touches[0].clientX);
+    }
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener("touchmove", handleTouchMove);
+      document.addEventListener("touchend", handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleMouseUp);
+    };
+  }, [isDragging]);
 
   return (
     <div className="flex flex-col gap-8 max-w-[600px] w-full">
@@ -71,20 +170,25 @@ export function TotalBalance() {
 
         {/* Slider */}
         <div className="flex flex-col gap-1 w-full">
-          <div className="relative h-3 bg-[rgba(212,208,201,0.5)] rounded-[21px]">
+          <div
+            ref={sliderRef}
+            className="relative h-3 bg-[rgba(212,208,201,0.5)] rounded-[21px] cursor-pointer"
+            onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
+          >
             <div
-              className="absolute h-full bg-neon-lime rounded-2xl transition-all"
+              className="absolute h-full bg-neon-lime rounded-2xl transition-all pointer-events-none"
               style={{ width: `${sliderPercentage}%` }}
             />
             {/* Slider knob */}
             <div
-              className="absolute top-1/2 -translate-y-1/2 w-[26px] h-[26px] bg-white border-2 border-black rounded-full shadow-md cursor-pointer transition-all"
+              className="absolute top-1/2 -translate-y-1/2 w-[26px] h-[26px] bg-white border-2 border-black rounded-full shadow-md transition-all pointer-events-none z-20"
               style={{ left: `calc(${sliderPercentage}% - 13px)` }}
             />
-            {/* Min knob */}
-            <div className="absolute top-1/2 -translate-y-1/2 left-0.5 w-[26px] h-[26px] bg-[rgba(113,112,106,0.2)] rounded-full" />
-            {/* Max knob */}
-            <div className="absolute top-1/2 -translate-y-1/2 right-0.5 w-[26px] h-[26px] bg-[rgba(113,112,106,0.2)] rounded-full" />
+            {/* Min knob - positioned inside the track */}
+            <div className="absolute top-1/2 -translate-y-1/2 left-0 -translate-x-[1px] w-[20px] h-[20px] bg-[rgba(113,112,106,0.2)] rounded-full pointer-events-none z-10" />
+            {/* Max knob - positioned inside the track */}
+            <div className="absolute top-1/2 -translate-y-1/2 right-0 translate-x-[1px] w-[20px] h-[20px] bg-[rgba(113,112,106,0.2)] rounded-full pointer-events-none z-10" />
           </div>
 
           {/* Labels */}

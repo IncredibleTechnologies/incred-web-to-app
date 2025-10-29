@@ -2,9 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { BackButton } from "../back-button";
+import { useOnboarding } from "@/contexts/onboarding-context";
 
 export function Savings() {
   const router = useRouter();
+  const { customPayoffSimulation } = useOnboarding();
 
   const handleContinue = () => {
     router.push("/onboarding/main-goal");
@@ -16,6 +18,10 @@ export function Savings() {
     "Automated payments",
     "Progress you can actually see",
   ];
+
+  // Use simulation data if available, otherwise use fallback values
+  const interestSaved = customPayoffSimulation?.interest_saved || 4830;
+  const monthsSaved = customPayoffSimulation?.months_saved || 18;
 
   return (
     <div className="flex flex-col gap-8 max-w-[600px] w-full">
@@ -37,12 +43,12 @@ export function Savings() {
         <div className="flex flex-col gap-4">
           <div className="border-2 border-neon-lime bg-neon-lime/10 rounded-3xl p-5 pt-6 pb-8 flex flex-col gap-2 items-center">
             <p className="font-sora font-extrabold text-[32px] leading-normal text-carbon text-center">
-              £4,830 🎉
+              £{interestSaved.toLocaleString()} 🎉
             </p>
             <div className="flex flex-col gap-3 items-center">
               <div className="bg-neon-lime px-3 py-1 rounded-[14px]">
                 <p className="font-satoshi font-bold text-base leading-6 text-carbon">
-                  Pay off 18 months faster
+                  Pay off {monthsSaved} months faster
                 </p>
               </div>
               <p className="font-satoshi font-medium text-base leading-6 text-carbon text-center">
