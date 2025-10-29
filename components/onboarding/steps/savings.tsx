@@ -60,7 +60,7 @@ export function Savings() {
   );
   console.log(
     "Selected Simulation Interest:",
-    selectedSimulation?.interest_paid
+    selectedSimulation?.total_interest_paid
   );
   const interestSaved =
     selectedSimulation && minimumPayoffSimulation
@@ -68,7 +68,7 @@ export function Savings() {
           0,
           Math.round(
             minimumPayoffSimulation.interest_paid -
-              selectedSimulation.interest_paid
+              selectedSimulation.total_interest_paid
           )
         )
       : 0;
