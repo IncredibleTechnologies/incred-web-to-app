@@ -1,13 +1,11 @@
 "use client";
-
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-export function AllSet() {
-  const router = useRouter();
+const DOWNLOAD_URL = "https://rb.gy/6xlt1i";
 
+export function AllSet() {
   const handleGetStarted = () => {
-    router.push("/app");
+    window.open(DOWNLOAD_URL, "_blank");
   };
 
   return (
@@ -28,32 +26,15 @@ export function AllSet() {
           Scan to download:
         </p>
 
-        {/* QR Code - Using placeholder, replace with actual QR code */}
-        <div className="relative w-[160px] h-[160px] bg-white border-2 border-[#e5e5e5] rounded-2xl p-4 flex items-center justify-center">
-          {/* QR Code placeholder - you can replace this with an actual QR code generator */}
-          <div className="w-full h-full bg-black/10 rounded flex items-center justify-center relative">
-            {/* QR pattern simulation - replace with real QR code */}
-            <div className="grid grid-cols-8 grid-rows-8 gap-[2px] w-full h-full p-2">
-              {[...Array(64)].map((_, i) => (
-                <div
-                  key={i}
-                  className={`${Math.random() > 0.5 ? 'bg-black' : 'bg-transparent'} rounded-sm`}
-                />
-              ))}
-            </div>
-            {/* Center logo */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-10 h-10 bg-neon-lime rounded-lg flex items-center justify-center">
-                <Image
-                  src="http://localhost:3845/assets/da22b51781b151e0c1c21904acbe18ecf5effdc2.svg"
-                  alt="Incredible"
-                  width={24}
-                  height={30}
-                  className="w-6 h-auto"
-                />
-              </div>
-            </div>
-          </div>
+        {/* QR Code */}
+        <div className="relative w-[207px] h-[207px]">
+          <Image
+            src="/qr-code.svg"
+            alt="Download Incredible QR Code"
+            width={207}
+            height={207}
+            className="w-full h-full"
+          />
         </div>
       </div>
 
@@ -71,23 +52,27 @@ export function AllSet() {
         <div className="flex items-center gap-2">
           {/* iOS Logo */}
           <div className="w-5 h-5 relative">
-            <Image
-              src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
-              alt="iOS"
-              width={20}
-              height={20}
-              className="w-full h-full"
-            />
+            <a href={DOWNLOAD_URL} target="_blank">
+              <Image
+                src="/app-store.svg"
+                alt="iOS"
+                width={20}
+                height={20}
+                className="w-full h-full"
+              />
+            </a>
           </div>
           {/* Android Logo */}
           <div className="w-5 h-5 relative">
-            <Image
-              src="https://upload.wikimedia.org/wikipedia/commons/d/d7/Android_robot.svg"
-              alt="Android"
-              width={20}
-              height={20}
-              className="w-full h-full"
-            />
+            <a href={DOWNLOAD_URL} target="_blank">
+              <Image
+                src="/play-store.svg"
+                alt="Android"
+                width={20}
+                height={20}
+                className="w-full h-full"
+              />
+            </a>
           </div>
         </div>
       </div>

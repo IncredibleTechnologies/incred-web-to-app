@@ -3,18 +3,61 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { BackButton } from "../back-button";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useAuth } from "reactfire";
+import { toast } from "@/components/ui/use-toast";
 
 export function ShareDetails() {
   const router = useRouter();
+  const auth = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "+44",
+    password: "",
   });
 
-  const handleContinue = () => {
-    router.push("/onboarding/all-set");
+  const handleContinue = async () => {
+    // Basic validation
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
+      toast({ title: "Please fill in all fields", variant: "destructive" });
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      toast({ title: "Password must be at least 8 characters", variant: "destructive" });
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+
+      if (userCredential?.user.uid && userCredential.user.email) {
+        // You can store additional user data (firstName, lastName, phone) in Firestore here
+        toast({ title: "Account created successfully!" });
+        router.push("/onboarding/all-set");
+      }
+    } catch (err: any) {
+      console.error("Sign up error:", err);
+      if (err.code === "auth/email-already-in-use") {
+        toast({ title: "Email already in use", variant: "destructive" });
+      } else if (err.code === "auth/invalid-email") {
+        toast({ title: "Invalid email address", variant: "destructive" });
+      } else if (err.code === "auth/weak-password") {
+        toast({ title: "Password is too weak", variant: "destructive" });
+      } else {
+        toast({ title: "Error creating account", description: err.message, variant: "destructive" });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -84,10 +127,10 @@ export function ShareDetails() {
 
         {/* Phone Field */}
         <div className="flex flex-col gap-1 h-[85px]">
-          <label className="font-satoshi font-medium text-[13px] leading-[18px] text-carbon">
+          <label className="font-satoshi font-medium text-[13px] leading-[18px] text-slate-100">
             Phone number
           </label>
-          <div className="flex-1 bg-white border-2 border-carbon rounded-2xl px-4 py-3 flex items-center gap-1">
+          <div className="flex-1 bg-white border-2 border-slate-100/20 rounded-2xl px-4 py-3 flex items-center gap-1">
             <input
               type="text"
               value={formData.phone}
@@ -98,12 +141,29 @@ export function ShareDetails() {
             />
           </div>
         </div>
+
+        {/* Password Field */}
+        <div className="flex flex-col gap-1 h-[85px]">
+          <label className="font-satoshi font-medium text-[13px] leading-[18px] text-slate-100">
+            Password
+          </label>
+          <input
+            type="password"
+            value={formData.password}
+            placeholder="At least 8 characters"
+            onChange={(e) =>
+              setFormData({ ...formData, password: e.target.value })
+            }
+            className="flex-1 bg-white border-2 border-slate-100/20 rounded-2xl px-4 py-3 font-satoshi font-bold text-base leading-6 text-black outline-none focus:border-carbon transition-colors"
+          />
+        </div>
       </div>
 
       {/* Continue Button */}
       <button
         onClick={handleContinue}
-        className="bg-carbon hover:bg-carbon/90 text-white font-sora font-extrabold text-base uppercase px-8 h-12 rounded-[48px] flex items-center justify-center gap-2 transition-colors"
+        disabled={isLoading}
+        className="bg-carbon hover:bg-carbon/90 disabled:bg-carbon/50 disabled:cursor-not-allowed text-white font-sora font-extrabold text-base uppercase px-8 h-12 rounded-[48px] flex items-center justify-center gap-2 transition-colors"
       >
         CONFIRM DETAILS
         <svg
