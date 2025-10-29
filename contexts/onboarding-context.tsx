@@ -26,11 +26,12 @@ export interface MinimumPayoffSimulation {
 }
 
 export interface CustomPayoffSimulation {
-  total_balance: number;
-  payoff_date: string;
   months_to_clear: number;
-  interest_paid: number;
-  total_paid: number;
+  payoff_date: string;
+  total_amount_paid: number;
+  total_balance_paid: number;
+  total_interest_paid: number;
+  total_minimum_payment: number;
   interest_saved?: number;
   months_saved?: number;
 }
@@ -48,26 +49,37 @@ interface OnboardingContextType {
 
   // Simulations
   minimumPayoffSimulation: MinimumPayoffSimulation | null;
-  setMinimumPayoffSimulation: (simulation: MinimumPayoffSimulation | null) => void;
+  setMinimumPayoffSimulation: (
+    simulation: MinimumPayoffSimulation | null
+  ) => void;
   customPayoffSimulation1_5x: CustomPayoffSimulation | null;
-  setCustomPayoffSimulation1_5x: (simulation: CustomPayoffSimulation | null) => void;
+  setCustomPayoffSimulation1_5x: (
+    simulation: CustomPayoffSimulation | null
+  ) => void;
   customPayoffSimulation2x: CustomPayoffSimulation | null;
-  setCustomPayoffSimulation2x: (simulation: CustomPayoffSimulation | null) => void;
+  setCustomPayoffSimulation2x: (
+    simulation: CustomPayoffSimulation | null
+  ) => void;
 
   // Selected monthly payment
   selectedMonthlyPayment: number;
   setSelectedMonthlyPayment: (payment: number) => void;
 }
 
-const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
+const OnboardingContext = createContext<OnboardingContextType | undefined>(
+  undefined
+);
 
 export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [totalBalance, setTotalBalance] = useState(5000);
   const [availableCards, setAvailableCards] = useState<CreditCardOption[]>([]);
   const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
-  const [minimumPayoffSimulation, setMinimumPayoffSimulation] = useState<MinimumPayoffSimulation | null>(null);
-  const [customPayoffSimulation1_5x, setCustomPayoffSimulation1_5x] = useState<CustomPayoffSimulation | null>(null);
-  const [customPayoffSimulation2x, setCustomPayoffSimulation2x] = useState<CustomPayoffSimulation | null>(null);
+  const [minimumPayoffSimulation, setMinimumPayoffSimulation] =
+    useState<MinimumPayoffSimulation | null>(null);
+  const [customPayoffSimulation1_5x, setCustomPayoffSimulation1_5x] =
+    useState<CustomPayoffSimulation | null>(null);
+  const [customPayoffSimulation2x, setCustomPayoffSimulation2x] =
+    useState<CustomPayoffSimulation | null>(null);
   const [selectedMonthlyPayment, setSelectedMonthlyPayment] = useState(0);
 
   return (
