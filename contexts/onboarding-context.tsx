@@ -26,10 +26,13 @@ export interface MinimumPayoffSimulation {
 }
 
 export interface CustomPayoffSimulation {
-  total_interest: number;
-  payoff_months: number;
-  interest_saved: number;
-  months_saved: number;
+  total_balance: number;
+  payoff_date: string;
+  months_to_clear: number;
+  interest_paid: number;
+  total_paid: number;
+  interest_saved?: number;
+  months_saved?: number;
 }
 
 interface OnboardingContextType {
@@ -46,8 +49,10 @@ interface OnboardingContextType {
   // Simulations
   minimumPayoffSimulation: MinimumPayoffSimulation | null;
   setMinimumPayoffSimulation: (simulation: MinimumPayoffSimulation | null) => void;
-  customPayoffSimulation: CustomPayoffSimulation | null;
-  setCustomPayoffSimulation: (simulation: CustomPayoffSimulation | null) => void;
+  customPayoffSimulation1_5x: CustomPayoffSimulation | null;
+  setCustomPayoffSimulation1_5x: (simulation: CustomPayoffSimulation | null) => void;
+  customPayoffSimulation2x: CustomPayoffSimulation | null;
+  setCustomPayoffSimulation2x: (simulation: CustomPayoffSimulation | null) => void;
 
   // Selected monthly payment
   selectedMonthlyPayment: number;
@@ -61,7 +66,8 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [availableCards, setAvailableCards] = useState<CreditCardOption[]>([]);
   const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
   const [minimumPayoffSimulation, setMinimumPayoffSimulation] = useState<MinimumPayoffSimulation | null>(null);
-  const [customPayoffSimulation, setCustomPayoffSimulation] = useState<CustomPayoffSimulation | null>(null);
+  const [customPayoffSimulation1_5x, setCustomPayoffSimulation1_5x] = useState<CustomPayoffSimulation | null>(null);
+  const [customPayoffSimulation2x, setCustomPayoffSimulation2x] = useState<CustomPayoffSimulation | null>(null);
   const [selectedMonthlyPayment, setSelectedMonthlyPayment] = useState(0);
 
   return (
@@ -75,8 +81,10 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         setSelectedCards,
         minimumPayoffSimulation,
         setMinimumPayoffSimulation,
-        customPayoffSimulation,
-        setCustomPayoffSimulation,
+        customPayoffSimulation1_5x,
+        setCustomPayoffSimulation1_5x,
+        customPayoffSimulation2x,
+        setCustomPayoffSimulation2x,
         selectedMonthlyPayment,
         setSelectedMonthlyPayment,
       }}

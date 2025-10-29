@@ -13,6 +13,8 @@ export function CreditCards() {
     selectedCards,
     setSelectedCards,
     setMinimumPayoffSimulation,
+    setCustomPayoffSimulation1_5x,
+    setCustomPayoffSimulation2x,
   } = useOnboarding();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -61,8 +63,8 @@ export function CreditCards() {
       // Save selected cards to context
       setSelectedCards(cards);
 
-      // Call simulate-minimum-payoff API
-      const response = await fetch("https://api.getincredible.com/user/simulate-minimum-payoff", {
+      // Call simulate-minimum-payoff API to get the minimum payment first
+      const minPayoffResponse = await fetch("https://api.getincredible.com/user/simulate-minimum-payoff", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,17 +77,54 @@ export function CreditCards() {
         }),
       });
 
-      if (!response.ok) {
+      if (!minPayoffResponse.ok) {
         throw new Error("Failed to simulate minimum payoff");
       }
 
-      const simulation = await response.json();
-      console.log("Minimum payoff simulation response:", simulation);
-      setMinimumPayoffSimulation(simulation);
+      const minPayoffSimulation = await minPayoffResponse.json();
+      setMinimumPayoffSimulation(minPayoffSimulation);
+
+      // Now call simulate-custom-payoff for 1.5x and 2x in parallel
+      const minPayment = minPayoffSimulation.minimum_payment;
+
+      const [response1_5x, response2x] = await Promise.all([
+        fetch("https://api.getincredible.com/user/simulate-custom-payoff", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            accept: "application/json",
+          },
+          body: JSON.stringify({
+            cards,
+            monthly_payment: Math.round(minPayment * 1.5),
+            strategy: "AVALANCHE",
+          }),
+        }),
+        fetch("https://api.getincredible.com/user/simulate-custom-payoff", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            accept: "application/json",
+          },
+          body: JSON.stringify({
+            cards,
+            monthly_payment: Math.round(minPayment * 2),
+            strategy: "AVALANCHE",
+          }),
+        }),
+      ]);
+
+      const [simulation1_5x, simulation2x] = await Promise.all([
+        response1_5x.json(),
+        response2x.json(),
+      ]);
+
+      setCustomPayoffSimulation1_5x(simulation1_5x);
+      setCustomPayoffSimulation2x(simulation2x);
 
       router.push("/onboarding/monthly-payment");
     } catch (error) {
-      console.error("Failed to simulate minimum payoff:", error);
+      console.error("Failed to simulate payoffs:", error);
       // Still navigate even if API fails
       router.push("/onboarding/monthly-payment");
     } finally {
@@ -134,26 +173,26 @@ export function CreditCards() {
                 <button
                   key={card.provider}
                   onClick={() => toggleCard(card.provider)}
-                  className="flex items-center gap-2 py-2 border-b border-slate-100/20 hover:bg-slate-100/5 transition-colors"
+                  className="flex items-center gap-3 py-4 border-b border-slate-100/20 hover:bg-slate-100/5 transition-colors"
                 >
                   {selectedProviders.has(card.provider) && (
-                    <div className="bg-neon-lime rounded-lg w-6 h-6 flex items-center justify-center">
+                    <div className="bg-neon-lime rounded-lg w-6 h-6 flex items-center justify-center flex-shrink-0">
                       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M2 7L6 11L12 3" stroke="#142a31" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     </div>
                   )}
-                  {!selectedProviders.has(card.provider) && <div className="w-6 h-6" />}
+                  {!selectedProviders.has(card.provider) && <div className="w-6 h-6 flex-shrink-0" />}
 
                   {/* Logo */}
                   {card.logo ? (
                     <img
                       src={card.logo}
                       alt={card.name}
-                      className="w-10 h-10 rounded-full object-cover bg-gradient-to-br from-blue-900 to-blue-700"
+                      className="w-10 h-10 object-contain flex-shrink-0"
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-900 to-blue-700 flex items-center justify-center text-white text-xs font-bold">
+                    <div className="w-10 h-10 flex items-center justify-center text-carbon text-xs font-bold flex-shrink-0">
                       {card.name.substring(0, 2).toUpperCase()}
                     </div>
                   )}
