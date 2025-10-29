@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { BackButton } from "../back-button";
+import { useOnboarding } from "@/contexts/onboarding-context";
 
 interface GoalOption {
   id: string;
@@ -11,7 +12,14 @@ interface GoalOption {
 
 export function MainGoal() {
   const router = useRouter();
-  const [selectedGoal, setSelectedGoal] = useState("faster-payoff");
+  const { selectedGoal, setSelectedGoal } = useOnboarding();
+
+  // Set default goal if none is selected
+  useEffect(() => {
+    if (!selectedGoal) {
+      setSelectedGoal("faster-payoff");
+    }
+  }, []);
 
   const goals: GoalOption[] = [
     { id: "faster-payoff", label: "Pay less interest and get out of debt faster" },

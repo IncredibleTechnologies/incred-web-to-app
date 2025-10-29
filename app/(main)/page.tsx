@@ -13,20 +13,20 @@ export default function Home() {
       {/* Header */}
       <header className="relative z-10 flex items-center justify-between p-8 min-h-[100px]">
         <div className="flex items-center gap-2 h-[30px]">
-          <div className="relative w-[23px] h-[30px]">
+          <div className="relative w-[24px] h-[30px]">
             <Image
-              src="http://localhost:3845/assets/da22b51781b151e0c1c21904acbe18ecf5effdc2.svg"
+              src="/icon.svg"
               alt="Incredible logo mark"
-              width={23}
+              width={24}
               height={30}
               className="w-full h-full"
             />
           </div>
-          <div className="relative w-[160.215px] h-[20px]">
+          <div className="relative w-[161px] h-[20px]">
             <Image
-              src="http://localhost:3845/assets/69c551878be36100ba06282f63630da9eac7a745.svg"
+              src="/logo.svg"
               alt="INCREDIBLE"
-              width={160}
+              width={161}
               height={20}
               className="w-full h-full"
             />

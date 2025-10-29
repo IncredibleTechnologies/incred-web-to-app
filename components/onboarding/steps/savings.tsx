@@ -45,23 +45,7 @@ export function Savings() {
     }
   }
 
-  // Debug logging
-  console.log("=== SAVINGS CALCULATION DEBUG ===");
-  console.log("Selected Monthly Payment:", selectedMonthlyPayment);
-  console.log("Minimum Payoff Simulation:", minimumPayoffSimulation);
-  console.log("Custom Payoff 1.5x:", customPayoffSimulation1_5x);
-  console.log("Custom Payoff 2x:", customPayoffSimulation2x);
-  console.log("Selected Simulation:", selectedSimulation);
-
   // Calculate interest savings: minimum payoff interest - selected custom payoff interest
-  console.log(
-    "Minimum Payoff Interest:",
-    minimumPayoffSimulation?.interest_paid
-  );
-  console.log(
-    "Selected Simulation Interest:",
-    selectedSimulation?.total_interest_paid
-  );
   const interestSaved =
     selectedSimulation && minimumPayoffSimulation
       ? Math.max(
@@ -82,10 +66,6 @@ export function Savings() {
             selectedSimulation.months_to_clear
         )
       : 0;
-
-  console.log("Interest Saved:", interestSaved);
-  console.log("Months Saved:", monthsSaved);
-  console.log("=================================");
 
   return (
     <div className="flex flex-col gap-8 max-w-[600px] w-full">

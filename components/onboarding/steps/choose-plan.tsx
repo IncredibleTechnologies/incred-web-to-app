@@ -1,12 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { BackButton } from "../back-button";
+import { useOnboarding } from "@/contexts/onboarding-context";
 
 export function ChoosePlan() {
   const router = useRouter();
-  const [selectedPlan, setSelectedPlan] = useState("plus");
+  const { selectedPlan, setSelectedPlan } = useOnboarding();
+
+  // Set default plan if none is selected
+  useEffect(() => {
+    if (!selectedPlan) {
+      setSelectedPlan("plus");
+    }
+  }, []);
 
   const handleContinue = () => {
     router.push("/onboarding/share-details");

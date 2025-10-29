@@ -29,7 +29,9 @@ export function CreditCards() {
   const filteredCards = useMemo(() => {
     if (!searchQuery.trim()) return availableCards;
     const query = searchQuery.toLowerCase();
-    return availableCards.filter((card) => card.name.toLowerCase().includes(query));
+    return availableCards.filter((card) =>
+      card.name.toLowerCase().includes(query)
+    );
   }, [availableCards, searchQuery]);
 
   const toggleCard = (provider: string) => {
@@ -64,18 +66,21 @@ export function CreditCards() {
       setSelectedCards(cards);
 
       // Call simulate-minimum-payoff API to get the minimum payment first
-      const minPayoffResponse = await fetch("https://api.getincredible.com/user/simulate-minimum-payoff", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          accept: "application/json",
-        },
-        body: JSON.stringify({
-          cards,
-          strategy: "AVALANCHE",
-          budget: 0,
-        }),
-      });
+      const minPayoffResponse = await fetch(
+        "https://api.getincredible.com/user/simulate-minimum-payoff",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            accept: "application/json",
+          },
+          body: JSON.stringify({
+            cards,
+            strategy: "AVALANCHE",
+            budget: 0,
+          }),
+        }
+      );
 
       if (!minPayoffResponse.ok) {
         throw new Error("Failed to simulate minimum payoff");
@@ -147,9 +152,20 @@ export function CreditCards() {
         <div className="flex flex-col gap-6 h-full">
           {/* Search Input */}
           <div className="bg-white border-2 border-slate-100/20 rounded-2xl px-4 py-3 flex items-center gap-1">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="11" cy="11" r="7" stroke="#71706a" strokeWidth="2"/>
-              <path d="M20 20L17 17" stroke="#71706a" strokeWidth="2" strokeLinecap="round"/>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle cx="11" cy="11" r="7" stroke="#71706a" strokeWidth="2" />
+              <path
+                d="M20 20L17 17"
+                stroke="#71706a"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
             </svg>
             <input
               type="text"
@@ -173,16 +189,30 @@ export function CreditCards() {
                 <button
                   key={card.provider}
                   onClick={() => toggleCard(card.provider)}
-                  className="flex items-center gap-3 py-4 border-b border-slate-100/20 hover:bg-slate-100/5 transition-colors"
+                  className="flex items-center gap-3 py-8 border-b border-slate-100/20 hover:bg-slate-100/5 transition-colors"
                 >
                   {selectedProviders.has(card.provider) && (
                     <div className="bg-neon-lime rounded-lg w-6 h-6 flex items-center justify-center flex-shrink-0">
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M2 7L6 11L12 3" stroke="#142a31" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 14 14"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M2 7L6 11L12 3"
+                          stroke="#142a31"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
                       </svg>
                     </div>
                   )}
-                  {!selectedProviders.has(card.provider) && <div className="w-6 h-6 flex-shrink-0" />}
+                  {!selectedProviders.has(card.provider) && (
+                    <div className="w-6 h-6 flex-shrink-0" />
+                  )}
 
                   {/* Logo */}
                   {card.logo ? (
@@ -220,9 +250,22 @@ export function CreditCards() {
           "Loading..."
         ) : (
           <>
-            Continue with {selectedCount} {selectedCount === 1 ? "card" : "cards"}
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            Continue with {selectedCount}{" "}
+            {selectedCount === 1 ? "card" : "cards"}
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9 18L15 12L9 6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </>
         )}

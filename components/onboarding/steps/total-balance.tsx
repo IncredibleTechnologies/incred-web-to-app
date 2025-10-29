@@ -19,12 +19,18 @@ export function TotalBalance() {
     const fetchCreditCards = async () => {
       try {
         const [namesResponse, logosResponse] = await Promise.all([
-          fetch("https://api.getincredible.com/connections/credit-cards-names", {
-            headers: { accept: "application/json" },
-          }),
-          fetch("https://api.getincredible.com/connections/credit-cards-logos", {
-            headers: { accept: "application/json" },
-          }),
+          fetch(
+            "https://api.getincredible.com/connections/credit-cards-names",
+            {
+              headers: { accept: "application/json" },
+            }
+          ),
+          fetch(
+            "https://api.getincredible.com/connections/credit-cards-logos",
+            {
+              headers: { accept: "application/json" },
+            }
+          ),
         ]);
 
         if (!namesResponse.ok || !logosResponse.ok) {
@@ -35,11 +41,13 @@ export function TotalBalance() {
         const logosData = await logosResponse.json();
 
         // The API returns an object where keys are provider IDs and values contain {title, subtitle}
-        const cards: CreditCardOption[] = Object.entries(namesData).map(([providerId, data]: [string, any]) => ({
-          provider: providerId,
-          name: data.title,
-          logo: logosData[providerId] || "",
-        }));
+        const cards: CreditCardOption[] = Object.entries(namesData).map(
+          ([providerId, data]: [string, any]) => ({
+            provider: providerId,
+            name: data.title,
+            logo: logosData[providerId] || "",
+          })
+        );
 
         // Sort alphabetically by name
         cards.sort((a, b) => a.name.localeCompare(b.name));
@@ -70,7 +78,8 @@ export function TotalBalance() {
     }
   };
 
-  const sliderPercentage = ((balance - minBalance) / (maxBalance - minBalance)) * 100;
+  const sliderPercentage =
+    ((balance - minBalance) / (maxBalance - minBalance)) * 100;
 
   const handleSliderChange = (clientX: number) => {
     if (!sliderRef.current) return;
@@ -78,7 +87,9 @@ export function TotalBalance() {
     const rect = sliderRef.current.getBoundingClientRect();
     const x = clientX - rect.left;
     const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
-    const newBalance = Math.round((percentage / 100) * (maxBalance - minBalance) + minBalance);
+    const newBalance = Math.round(
+      (percentage / 100) * (maxBalance - minBalance) + minBalance
+    );
 
     // Round to nearest 100
     const roundedBalance = Math.round(newBalance / 100) * 100;
@@ -140,11 +151,12 @@ export function TotalBalance() {
       {/* Card Content */}
       <div className="bg-white border-2 border-[#fbfbfc] rounded-3xl p-8 flex flex-col gap-6">
         <p className="font-satoshi font-medium text-base leading-6 text-carbon">
-          Don&apos;t worry, this can be an estimate! We&apos;ll use this to work out how much you could save by paying off your cards smarter.
+          Don&apos;t worry, this can be an estimate! We&apos;ll use this to work
+          out how much you could save by paying off your cards smarter.
         </p>
 
         {/* Balance Adjuster */}
-        <div className="border-2 border-[#e7e5e1] rounded-[40px] h-[68px] bg-white flex items-center justify-between px-4">
+        <div className="border-2 border-[#e7e5e1] rounded-[40px] h-[68px] bg-white flex items-center px-1">
           <button
             onClick={decreaseBalance}
             className="bg-[rgba(212,208,201,0.5)] rounded-3xl w-10 h-10 flex items-center justify-center hover:bg-[rgba(212,208,201,0.7)] transition-colors"
@@ -153,7 +165,7 @@ export function TotalBalance() {
             <div className="w-5 h-0.5 bg-[#142a31] rounded-sm" />
           </button>
 
-          <p className="font-sora font-extrabold text-[32px] leading-normal text-black">
+          <p className="flex-1 text-center font-sora font-extrabold text-[32px] leading-normal text-black">
             £{balance.toLocaleString()}
           </p>
 
@@ -162,8 +174,19 @@ export function TotalBalance() {
             className="bg-neon-lime rounded-3xl w-10 h-10 flex items-center justify-center hover:bg-neon-lime/80 transition-colors"
             aria-label="Increase balance"
           >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10 4V16M4 10H16" stroke="#142a31" strokeWidth="2" strokeLinecap="round"/>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M10 4V16M4 10H16"
+                stroke="#142a31"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
             </svg>
           </button>
         </div>
@@ -185,10 +208,6 @@ export function TotalBalance() {
               className="absolute top-1/2 -translate-y-1/2 w-[26px] h-[26px] bg-white border-2 border-black rounded-full shadow-md transition-all pointer-events-none z-20"
               style={{ left: `calc(${sliderPercentage}% - 13px)` }}
             />
-            {/* Min knob - positioned inside the track */}
-            <div className="absolute top-1/2 -translate-y-1/2 left-0 -translate-x-[1px] w-[20px] h-[20px] bg-[rgba(113,112,106,0.2)] rounded-full pointer-events-none z-10" />
-            {/* Max knob - positioned inside the track */}
-            <div className="absolute top-1/2 -translate-y-1/2 right-0 translate-x-[1px] w-[20px] h-[20px] bg-[rgba(113,112,106,0.2)] rounded-full pointer-events-none z-10" />
           </div>
 
           {/* Labels */}
@@ -205,8 +224,20 @@ export function TotalBalance() {
         className="bg-carbon hover:bg-carbon/90 text-white font-sora font-extrabold text-base uppercase px-8 h-12 rounded-[48px] flex items-center justify-center gap-2 transition-colors"
       >
         Continue
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M9 18L15 12L9 6"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       </button>
     </div>
