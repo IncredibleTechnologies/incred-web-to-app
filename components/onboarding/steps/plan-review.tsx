@@ -2,12 +2,89 @@
 
 import { useRouter } from "next/navigation";
 import { BackButton } from "../back-button";
+import { useOnboarding } from "@/contexts/onboarding-context";
 
 export function PlanReview() {
   const router = useRouter();
+  const {
+    totalBalance,
+    selectedCards,
+    availableCards,
+    minimumPayoffSimulation,
+    customPayoffSimulation1_5x,
+    customPayoffSimulation2x,
+    selectedMonthlyPayment,
+  } = useOnboarding();
 
   const handleContinue = () => {
     router.push("/onboarding/choose-plan");
+  };
+
+  // Determine which simulation to use based on selected monthly payment
+  let selectedSimulation = null;
+
+  if (minimumPayoffSimulation) {
+    const minPayment = minimumPayoffSimulation.minimum_payment;
+    const payment1_5x = Math.round(minPayment * 1.5);
+    const payment2x = Math.round(minPayment * 2);
+
+    if (selectedMonthlyPayment === payment1_5x && customPayoffSimulation1_5x) {
+      selectedSimulation = customPayoffSimulation1_5x;
+    } else if (
+      selectedMonthlyPayment === payment2x &&
+      customPayoffSimulation2x
+    ) {
+      selectedSimulation = customPayoffSimulation2x;
+    } else {
+      // If minimum payment selected, default to showing 1.5x savings
+      selectedSimulation = customPayoffSimulation1_5x;
+    }
+  }
+
+  // Calculate interest savings
+  const interestSaved =
+    selectedSimulation && minimumPayoffSimulation
+      ? Math.max(
+          0,
+          Math.round(
+            minimumPayoffSimulation.interest_paid -
+              selectedSimulation.total_interest_paid
+          )
+        )
+      : 0;
+
+  // Get today's date formatted
+  const today = new Date();
+  const planStartDate = today.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+  });
+
+  // Format payoff date from DD-MM-YYYY format
+  const formatPayoffDate = (dateString: string) => {
+    if (!dateString) return "";
+    // Parse DD-MM-YYYY format
+    const [day, month, year] = dateString.split("-").map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString("en-GB", {
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  // Get number of payments and payment amount
+  const numberOfPayments = selectedSimulation?.months_to_clear || 0;
+  const paymentAmount = selectedMonthlyPayment || 0;
+  const payoffDate = selectedSimulation?.payoff_date
+    ? formatPayoffDate(selectedSimulation.payoff_date)
+    : "";
+
+  // Get card logos by matching provider IDs
+  const getCardLogo = (providerId: string) => {
+    const cardOption = availableCards.find(
+      (card) => card.provider === providerId
+    );
+    return cardOption?.logo || "";
   };
 
   return (
@@ -32,24 +109,33 @@ export function PlanReview() {
               Total balance
             </p>
             <p className="font-sora font-bold text-xl leading-7 text-carbon">
-              £5,500
+              £{totalBalance.toLocaleString()}
             </p>
           </div>
 
           <div className="flex items-center gap-2">
             <div className="flex -space-x-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-900 to-blue-700 border-2 border-white flex items-center justify-center text-sm">
-                🏦
-              </div>
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-blue-400 border-2 border-white flex items-center justify-center text-sm">
-                ⭐
-              </div>
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-600 to-green-400 border-2 border-white flex items-center justify-center text-sm">
-                🐴
-              </div>
+              {selectedCards.slice(0, 3).map((card, index) => {
+                const logo = getCardLogo(card.provider);
+                return (
+                  <div
+                    key={index}
+                    className="w-8 h-8 rounded-full bg-white border-2 border-white flex items-center justify-center overflow-hidden"
+                  >
+                    {logo && (
+                      <img
+                        src={logo}
+                        alt={card.provider}
+                        className="w-full h-full object-contain"
+                      />
+                    )}
+                  </div>
+                );
+              })}
             </div>
             <p className="font-satoshi font-medium text-base leading-6 text-slate-100">
-              3 cards
+              {selectedCards.length}{" "}
+              {selectedCards.length === 1 ? "card" : "cards"}
             </p>
           </div>
         </div>
@@ -61,16 +147,16 @@ export function PlanReview() {
               Plan start date
             </p>
             <p className="font-sora font-bold text-xl leading-7 text-carbon">
-              July 31st
+              {planStartDate}
             </p>
           </div>
 
           <div className="flex-1 flex flex-col gap-1 items-end">
             <p className="font-satoshi font-medium text-base leading-6 text-slate-100 text-right">
-              9 payments of
+              {numberOfPayments} payments of
             </p>
             <p className="font-sora font-bold text-xl leading-7 text-carbon text-right">
-              £700
+              £{paymentAmount.toLocaleString()}
             </p>
           </div>
         </div>
@@ -81,11 +167,11 @@ export function PlanReview() {
             You&apos;ll save an estimated*
           </p>
           <p className="font-sora font-extrabold text-[32px] leading-normal text-carbon text-center">
-            £4,830 🎉
+            £{interestSaved.toLocaleString()} 🎉
           </p>
           <div className="bg-neon-lime px-3 py-1 rounded-[14px]">
             <p className="font-satoshi font-bold text-base leading-6 text-carbon">
-              Pay off in Sep 2026
+              Pay off in {payoffDate}
             </p>
           </div>
         </div>
@@ -101,8 +187,20 @@ export function PlanReview() {
         className="bg-carbon hover:bg-carbon/90 text-white font-sora font-extrabold text-base uppercase px-8 h-12 rounded-[48px] flex items-center justify-center gap-2 transition-colors"
       >
         Continue
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M9 18L15 12L9 6"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       </button>
     </div>

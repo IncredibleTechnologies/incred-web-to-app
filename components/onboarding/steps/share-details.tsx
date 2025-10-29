@@ -7,9 +7,9 @@ import { BackButton } from "../back-button";
 export function ShareDetails() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    firstName: "John",
-    lastName: "Smith",
-    email: "john@example.com",
+    firstName: "",
+    lastName: "",
+    email: "",
     phone: "+44",
   });
 
@@ -26,7 +26,8 @@ export function ShareDetails() {
           Almost there!
         </h1>
         <p className="font-satoshi font-medium text-base leading-6 text-carbon">
-          Enter your details to get started with your personalised debt payoff plan.
+          Enter your details to get started with your personalised debt payoff
+          plan.
         </p>
       </div>
 
@@ -41,7 +42,10 @@ export function ShareDetails() {
             <input
               type="text"
               value={formData.firstName}
-              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+              placeholder="John"
+              onChange={(e) =>
+                setFormData({ ...formData, firstName: e.target.value })
+              }
               className="flex-1 bg-white border-2 border-slate-100/20 rounded-2xl px-4 py-3 font-satoshi font-bold text-base leading-6 text-black outline-none focus:border-carbon transition-colors"
             />
           </div>
@@ -53,7 +57,10 @@ export function ShareDetails() {
             <input
               type="text"
               value={formData.lastName}
-              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+              placeholder="Smith"
+              onChange={(e) =>
+                setFormData({ ...formData, lastName: e.target.value })
+              }
               className="flex-1 bg-white border-2 border-slate-100/20 rounded-2xl px-4 py-3 font-satoshi font-bold text-base leading-6 text-black outline-none focus:border-carbon transition-colors"
             />
           </div>
@@ -67,7 +74,10 @@ export function ShareDetails() {
           <input
             type="email"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            placeholder="john@example.com"
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
             className="flex-1 bg-white border-2 border-slate-100/20 rounded-2xl px-4 py-3 font-satoshi font-bold text-base leading-6 text-black outline-none focus:border-carbon transition-colors"
           />
         </div>
@@ -81,10 +91,11 @@ export function ShareDetails() {
             <input
               type="text"
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="font-satoshi font-bold text-base leading-6 text-black outline-none bg-transparent"
+              onChange={(e) =>
+                setFormData({ ...formData, phone: e.target.value })
+              }
+              className="flex-1 font-satoshi font-bold text-base leading-6 text-black outline-none bg-transparent"
             />
-            <div className="w-px h-6 bg-carbon" />
           </div>
         </div>
       </div>
@@ -95,8 +106,20 @@ export function ShareDetails() {
         className="bg-carbon hover:bg-carbon/90 text-white font-sora font-extrabold text-base uppercase px-8 h-12 rounded-[48px] flex items-center justify-center gap-2 transition-colors"
       >
         CONFIRM DETAILS
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M9 18L15 12L9 6"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       </button>
     </div>

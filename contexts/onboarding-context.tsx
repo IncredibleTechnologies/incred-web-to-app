@@ -64,6 +64,14 @@ interface OnboardingContextType {
   // Selected monthly payment
   selectedMonthlyPayment: number;
   setSelectedMonthlyPayment: (payment: number) => void;
+
+  // Main goal
+  selectedGoal: string;
+  setSelectedGoal: (goal: string) => void;
+
+  // Selected plan
+  selectedPlan: string;
+  setSelectedPlan: (plan: string) => void;
 }
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(
@@ -81,6 +89,8 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [customPayoffSimulation2x, setCustomPayoffSimulation2x] =
     useState<CustomPayoffSimulation | null>(null);
   const [selectedMonthlyPayment, setSelectedMonthlyPayment] = useState(0);
+  const [selectedGoal, setSelectedGoal] = useState("");
+  const [selectedPlan, setSelectedPlan] = useState("");
 
   return (
     <OnboardingContext.Provider
@@ -99,6 +109,10 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         setCustomPayoffSimulation2x,
         selectedMonthlyPayment,
         setSelectedMonthlyPayment,
+        selectedGoal,
+        setSelectedGoal,
+        selectedPlan,
+        setSelectedPlan,
       }}
     >
       {children}
