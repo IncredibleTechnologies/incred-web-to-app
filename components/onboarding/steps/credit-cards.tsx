@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { BackButton } from "../back-button";
+import { ContinueButton } from "../continue-button";
 import { useOnboarding } from "@/contexts/onboarding-context";
 
 export function CreditCards() {
@@ -256,35 +257,12 @@ export function CreditCards() {
       </div>
 
       {/* Continue Button */}
-      <button
+      <ContinueButton
         onClick={handleContinue}
-        disabled={selectedCount === 0 || isLoading}
-        className="bg-carbon hover:bg-carbon/90 text-white font-sora font-extrabold text-base uppercase px-8 h-12 rounded-[48px] flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isLoading ? (
-          "Loading..."
-        ) : (
-          <>
-            Continue with {selectedCount}{" "}
-            {selectedCount === 1 ? "card" : "cards"}
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M9 18L15 12L9 6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </>
-        )}
-      </button>
+        disabled={selectedCount === 0}
+        isLoading={isLoading}
+        text={`Continue with ${selectedCount} ${selectedCount === 1 ? "card" : "cards"}`}
+      />
     </div>
   );
 }
