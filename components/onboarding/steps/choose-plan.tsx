@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { BackButton } from "../back-button";
 import { useOnboarding } from "@/contexts/onboarding-context";
 
@@ -54,7 +55,7 @@ export function ChoosePlan() {
             <div className="flex items-center gap-3 h-8">
               <div className="flex-1 flex items-center justify-between">
                 <div className="bg-neon-lime px-3 py-0.5 rounded-xl flex items-center gap-1.5">
-                  <div className="w-3.5 h-4.5 text-xs">💡</div>
+                  <Image src="/icon.svg" alt="Plan icon" width={14} height={18} className="w-3.5 h-4.5" />
                   <p className="font-satoshi font-bold text-base leading-6 text-black">
                     Plus
                   </p>
@@ -90,7 +91,7 @@ export function ChoosePlan() {
             <div className="flex items-center gap-3">
               <div className="flex-1 flex items-center justify-between">
                 <div className="bg-gradient-to-r from-slate-100/20 to-white/20 px-3 py-0.5 rounded-xl flex items-center gap-1.5">
-                  <div className="w-3.5 h-4.5 text-xs">💡</div>
+                  <Image src="/icon.svg" alt="Plan icon" width={14} height={18} className="w-3.5 h-4.5" />
                   <p className="font-satoshi font-bold text-base leading-6 text-black">
                     Pro
                   </p>

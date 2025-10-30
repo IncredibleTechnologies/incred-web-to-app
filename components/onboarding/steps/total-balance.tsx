@@ -10,7 +10,11 @@ export function TotalBalance() {
   const { totalBalance, setTotalBalance, setAvailableCards } = useOnboarding();
   const [balance, setBalance] = useState(totalBalance);
   const [isDragging, setIsDragging] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [error, setError] = useState("");
   const sliderRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const minBalance = 1000;
   const maxBalance = 30000;
 
@@ -41,17 +45,20 @@ export function TotalBalance() {
         const logosData = await logosResponse.json();
 
         // The API returns an object where keys are provider IDs and values contain {title, subtitle}
-        const cards: CreditCardOption[] = Object.entries(namesData).map(
-          ([providerId, data]: [string, any]) => ({
+        const cards: CreditCardOption[] = Object.entries(namesData)
+          .filter(([providerId]: [string, any]) => {
+            // Filter out entries with truelayer in the logo URL
+            const logoUrl = logosData[providerId] || "";
+            return !logoUrl.toLowerCase().includes("truelayer");
+          })
+          .map(([providerId, data]: [string, any]) => ({
             provider: providerId,
             name: data.title,
             logo: logosData[providerId] || "",
-          })
-        );
+          }));
 
         // Sort alphabetically by name
         cards.sort((a, b) => a.name.localeCompare(b.name));
-
         setAvailableCards(cards);
       } catch (error) {
         console.error("Failed to fetch credit cards:", error);
@@ -138,6 +145,76 @@ export function TotalBalance() {
     };
   }, [isDragging]);
 
+  // Focus input when editing starts
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const handleBalanceClick = () => {
+    setIsEditing(true);
+    setInputValue(balance.toString());
+    setError("");
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow only numbers and empty string
+    if (value === "" || /^\d+$/.test(value)) {
+      setInputValue(value);
+      setError("");
+    }
+  };
+
+  const validateAndSetBalance = () => {
+    if (inputValue === "") {
+      setError("Please enter a value");
+      return;
+    }
+
+    const numValue = parseInt(inputValue, 10);
+
+    if (isNaN(numValue)) {
+      setError("Please enter a valid number");
+      return;
+    }
+
+    if (numValue <= 0) {
+      setError("Balance must be greater than 0");
+      return;
+    }
+
+    if (numValue >= 30000) {
+      setError("Balance must be less than £30,000");
+      return;
+    }
+
+    // Valid input
+    setBalance(numValue);
+    setIsEditing(false);
+    setError("");
+  };
+
+  const handleInputBlur = () => {
+    if (inputValue !== "") {
+      validateAndSetBalance();
+    } else {
+      setIsEditing(false);
+      setError("");
+    }
+  };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      validateAndSetBalance();
+    } else if (e.key === "Escape") {
+      setIsEditing(false);
+      setError("");
+    }
+  };
+
   return (
     <div className="flex flex-col gap-8 max-w-[600px] w-full">
       {/* Header */}
@@ -156,39 +233,68 @@ export function TotalBalance() {
         </p>
 
         {/* Balance Adjuster */}
-        <div className="border-2 border-[#e7e5e1] rounded-[40px] h-[68px] bg-white flex items-center px-1">
-          <button
-            onClick={decreaseBalance}
-            className="bg-[rgba(212,208,201,0.5)] rounded-3xl w-10 h-10 flex items-center justify-center hover:bg-[rgba(212,208,201,0.7)] transition-colors"
-            aria-label="Decrease balance"
-          >
-            <div className="w-5 h-0.5 bg-[#142a31] rounded-sm" />
-          </button>
-
-          <p className="flex-1 text-center font-sora font-extrabold text-[32px] leading-normal text-black">
-            £{balance.toLocaleString()}
-          </p>
-
-          <button
-            onClick={increaseBalance}
-            className="bg-neon-lime rounded-3xl w-10 h-10 flex items-center justify-center hover:bg-neon-lime/80 transition-colors"
-            aria-label="Increase balance"
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+        <div className="flex flex-col gap-2">
+          <div className="border-2 border-[#e7e5e1] rounded-[40px] h-[68px] bg-white flex items-center px-1">
+            <button
+              onClick={decreaseBalance}
+              className="bg-[rgba(212,208,201,0.5)] rounded-3xl w-10 h-10 flex items-center justify-center hover:bg-[rgba(212,208,201,0.7)] transition-colors"
+              aria-label="Decrease balance"
             >
-              <path
-                d="M10 4V16M4 10H16"
-                stroke="#142a31"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </button>
+              <div className="w-5 h-0.5 bg-[#142a31] rounded-sm" />
+            </button>
+
+            {isEditing ? (
+              <div className="flex-1 flex items-center justify-center">
+                <span className="font-sora font-extrabold text-[32px] leading-normal text-black">
+                  £
+                </span>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  inputMode="numeric"
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  onBlur={handleInputBlur}
+                  onKeyDown={handleInputKeyDown}
+                  className="font-sora font-extrabold text-[32px] leading-normal text-black text-center bg-transparent outline-none w-[200px]"
+                  placeholder="0"
+                />
+              </div>
+            ) : (
+              <p
+                onClick={handleBalanceClick}
+                className="flex-1 text-center font-sora font-extrabold text-[32px] leading-normal text-black cursor-pointer hover:opacity-70 transition-opacity"
+              >
+                £{balance.toLocaleString()}
+              </p>
+            )}
+
+            <button
+              onClick={increaseBalance}
+              className="bg-neon-lime rounded-3xl w-10 h-10 flex items-center justify-center hover:bg-neon-lime/80 transition-colors"
+              aria-label="Increase balance"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M10 4V16M4 10H16"
+                  stroke="#142a31"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          </div>
+          {error && (
+            <p className="text-red-500 text-sm font-satoshi text-center">
+              {error}
+            </p>
+          )}
         </div>
 
         {/* Slider */}

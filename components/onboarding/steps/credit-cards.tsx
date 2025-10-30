@@ -13,6 +13,7 @@ export function CreditCards() {
     selectedCards,
     setSelectedCards,
     setMinimumPayoffSimulation,
+    setCustomPayoffSimulation1x,
     setCustomPayoffSimulation1_5x,
     setCustomPayoffSimulation2x,
   } = useOnboarding();
@@ -89,10 +90,22 @@ export function CreditCards() {
       const minPayoffSimulation = await minPayoffResponse.json();
       setMinimumPayoffSimulation(minPayoffSimulation);
 
-      // Now call simulate-custom-payoff for 1.5x and 2x in parallel
+      // Now call simulate-custom-payoff for 1x, 1.5x and 2x in parallel
       const minPayment = minPayoffSimulation.minimum_payment;
 
-      const [response1_5x, response2x] = await Promise.all([
+      const [response1x, response1_5x, response2x] = await Promise.all([
+        fetch("https://api.getincredible.com/user/simulate-custom-payoff", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            accept: "application/json",
+          },
+          body: JSON.stringify({
+            cards,
+            monthly_payment: Math.round(minPayment),
+            strategy: "AVALANCHE",
+          }),
+        }),
         fetch("https://api.getincredible.com/user/simulate-custom-payoff", {
           method: "POST",
           headers: {
@@ -119,11 +132,13 @@ export function CreditCards() {
         }),
       ]);
 
-      const [simulation1_5x, simulation2x] = await Promise.all([
+      const [simulation1x, simulation1_5x, simulation2x] = await Promise.all([
+        response1x.json(),
         response1_5x.json(),
         response2x.json(),
       ]);
 
+      setCustomPayoffSimulation1x(simulation1x);
       setCustomPayoffSimulation1_5x(simulation1_5x);
       setCustomPayoffSimulation2x(simulation2x);
 

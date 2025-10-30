@@ -19,15 +19,61 @@ export function ShareDetails() {
     password: "",
   });
 
+  // Validate UK phone number
+  const isValidUKPhone = (phone: string): boolean => {
+    // Remove all spaces and hyphens
+    const cleanPhone = phone.replace(/[\s-]/g, "");
+
+    // UK phone number patterns:
+    // +44 followed by 10 digits (total 13 chars)
+    // 0 followed by 10 digits (total 11 chars)
+    const ukPhoneRegex = /^(\+44\d{10}|0\d{10})$/;
+
+    return ukPhoneRegex.test(cleanPhone);
+  };
+
+  // Handle phone input change with formatting
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    // Allow only numbers, +, spaces, and hyphens
+    const sanitized = value.replace(/[^\d+\s-]/g, "");
+
+    // Ensure +44 prefix stays if user tries to delete it at the start
+    if (sanitized.length < 3 && !sanitized.startsWith("+")) {
+      setFormData({ ...formData, phone: "+44" });
+    } else {
+      setFormData({ ...formData, phone: sanitized });
+    }
+  };
+
   const handleContinue = async () => {
     // Basic validation
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.password
+    ) {
       toast({ title: "Please fill in all fields", variant: "destructive" });
       return;
     }
 
+    if (!isValidUKPhone(formData.phone)) {
+      toast({
+        title: "Invalid UK phone number",
+        description:
+          "Please enter a valid UK phone number (e.g., +447123456789)",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (formData.password.length < 8) {
-      toast({ title: "Password must be at least 8 characters", variant: "destructive" });
+      toast({
+        title: "Password must be at least 8 characters",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -53,7 +99,11 @@ export function ShareDetails() {
       } else if (err.code === "auth/weak-password") {
         toast({ title: "Password is too weak", variant: "destructive" });
       } else {
-        toast({ title: "Error creating account", description: err.message, variant: "destructive" });
+        toast({
+          title: "Error creating account",
+          description: err.message,
+          variant: "destructive",
+        });
       }
     } finally {
       setIsLoading(false);
@@ -132,11 +182,10 @@ export function ShareDetails() {
           </label>
           <div className="flex-1 bg-white border-2 border-slate-100/20 rounded-2xl px-4 py-3 flex items-center gap-1">
             <input
-              type="text"
+              type="tel"
               value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
+              onChange={handlePhoneChange}
+              placeholder="+447123456789"
               className="flex-1 font-satoshi font-bold text-base leading-6 text-black outline-none bg-transparent"
             />
           </div>

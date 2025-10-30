@@ -67,6 +67,21 @@ export function Savings() {
         )
       : 0;
 
+  // Format months saved as "X years and Y months" if > 12 months
+  const formatMonthsSaved = (months: number): string => {
+    if (months > 12) {
+      const years = Math.floor(months / 12);
+      const remainingMonths = months % 12;
+      if (remainingMonths === 0) {
+        return `${years} ${years === 1 ? "year" : "years"}`;
+      }
+      return `${years} ${
+        years === 1 ? "year" : "years"
+      } and ${remainingMonths} ${remainingMonths === 1 ? "month" : "months"}`;
+    }
+    return `${months} ${months === 1 ? "month" : "months"}`;
+  };
+
   return (
     <div className="flex flex-col gap-8 max-w-[600px] w-full">
       {/* Header */}
@@ -92,17 +107,21 @@ export function Savings() {
             <div className="flex flex-col gap-3 items-center">
               <div className="bg-neon-lime px-3 py-1 rounded-[14px]">
                 <p className="font-satoshi font-bold text-base leading-6 text-carbon">
-                  Pay off {monthsSaved} months faster
+                  Pay off {formatMonthsSaved(monthsSaved)} faster *
                 </p>
               </div>
               <p className="font-satoshi font-medium text-base leading-6 text-carbon text-center">
-                Total interest savings*
+                Total interest savings **
               </p>
             </div>
           </div>
 
           <p className="font-satoshi font-medium text-[13px] leading-[18px] text-slate-100 text-center">
-            *Estimates are based on your current information.
+            * Assuming minimum payments are made each month
+          </p>
+
+          <p className="font-satoshi font-medium text-[13px] leading-[18px] text-slate-100 text-center">
+            ** Estimates are based on your current information
           </p>
         </div>
 
