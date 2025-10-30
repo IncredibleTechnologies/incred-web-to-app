@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { BackButton } from "../back-button";
+import { ContinueButton } from "../continue-button";
 import { useOnboarding } from "@/contexts/onboarding-context";
 
 interface PaymentOption {
@@ -16,6 +17,7 @@ export function MonthlyPayment() {
   const router = useRouter();
   const {
     minimumPayoffSimulation,
+    customPayoffSimulation1x,
     customPayoffSimulation1_5x,
     customPayoffSimulation2x,
     setSelectedMonthlyPayment,
@@ -26,9 +28,12 @@ export function MonthlyPayment() {
 
   // Calculate payment options based on minimum payoff simulation
   useEffect(() => {
-    if (minimumPayoffSimulation && minimumPayoffSimulation.minimum_payment) {
-      const minPayment = minimumPayoffSimulation.minimum_payment;
-      const minMonths = minimumPayoffSimulation.months_to_clear;
+    if (
+      customPayoffSimulation1x &&
+      customPayoffSimulation1x.total_minimum_payment
+    ) {
+      const minPayment = customPayoffSimulation1x.total_minimum_payment;
+      const minMonths = customPayoffSimulation1x.months_to_clear;
 
       // Create all options using pre-fetched simulation data
       const allOptions: PaymentOption[] = [
@@ -40,13 +45,17 @@ export function MonthlyPayment() {
         {
           id: "1.5x",
           amount: Math.round(minPayment * 1.5),
-          duration: customPayoffSimulation1_5x?.months_to_clear || Math.round(minMonths * 0.7),
+          duration:
+            customPayoffSimulation1_5x?.months_to_clear ||
+            Math.round(minMonths * 0.7),
           recommended: true,
         },
         {
           id: "2x",
           amount: Math.round(minPayment * 2),
-          duration: customPayoffSimulation2x?.months_to_clear || Math.round(minMonths * 0.5),
+          duration:
+            customPayoffSimulation2x?.months_to_clear ||
+            Math.round(minMonths * 0.5),
         },
       ];
 
@@ -64,7 +73,12 @@ export function MonthlyPayment() {
       setSelectedOption("850");
       setSelectedMonthlyPayment(850);
     }
-  }, [minimumPayoffSimulation, customPayoffSimulation1_5x, customPayoffSimulation2x, setSelectedMonthlyPayment]);
+  }, [
+    customPayoffSimulation1x,
+    customPayoffSimulation1_5x,
+    customPayoffSimulation2x,
+    setSelectedMonthlyPayment,
+  ]);
 
   const handleOptionSelect = (option: PaymentOption) => {
     setSelectedOption(option.id);
@@ -101,9 +115,13 @@ export function MonthlyPayment() {
           >
             {/* Recommended Badge */}
             {option.recommended && (
-              <div className={`absolute top-3 right-3 px-3 py-0.5 rounded-xl ${
-                selectedOption === option.id ? "bg-neon-lime" : "bg-slate-100/20"
-              }`}>
+              <div
+                className={`absolute top-3 right-3 px-3 py-0.5 rounded-xl ${
+                  selectedOption === option.id
+                    ? "bg-neon-lime"
+                    : "bg-slate-100/20"
+                }`}
+              >
                 <p className="font-satoshi font-bold text-base leading-6 text-black">
                   Recommended
                 </p>
@@ -112,11 +130,13 @@ export function MonthlyPayment() {
 
             <div className="flex items-center gap-3 h-8">
               {/* Radio Button */}
-              <div className={`w-6 h-6 rounded-full border flex items-center justify-center ${
-                selectedOption === option.id
-                  ? "bg-neon-lime border-[#f6f5f1]"
-                  : "border-slate-100/20"
-              }`}>
+              <div
+                className={`w-6 h-6 rounded-full border flex items-center justify-center ${
+                  selectedOption === option.id
+                    ? "bg-neon-lime border-[#f6f5f1]"
+                    : "border-slate-100/20"
+                }`}
+              >
                 {selectedOption === option.id && (
                   <div className="w-2.5 h-2.5 rounded-full bg-[#142a31]" />
                 )}
@@ -139,16 +159,7 @@ export function MonthlyPayment() {
       </div>
 
       {/* Continue Button */}
-      <button
-        onClick={handleContinue}
-        disabled={!selectedOption}
-        className="bg-carbon hover:bg-carbon/90 text-white font-sora font-extrabold text-base uppercase px-8 h-12 rounded-[48px] flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        Continue
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </button>
+      <ContinueButton onClick={handleContinue} disabled={!selectedOption} />
     </div>
   );
 }

@@ -2,7 +2,9 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { BackButton } from "../back-button";
+import { ContinueButton } from "../continue-button";
 import { useOnboarding } from "@/contexts/onboarding-context";
 
 export function ChoosePlan() {
@@ -54,7 +56,7 @@ export function ChoosePlan() {
             <div className="flex items-center gap-3 h-8">
               <div className="flex-1 flex items-center justify-between">
                 <div className="bg-neon-lime px-3 py-0.5 rounded-xl flex items-center gap-1.5">
-                  <div className="w-3.5 h-4.5 text-xs">💡</div>
+                  <Image src="/icon.svg" alt="Plan icon" width={14} height={18} className="w-3.5 h-4.5" />
                   <p className="font-satoshi font-bold text-base leading-6 text-black">
                     Plus
                   </p>
@@ -90,7 +92,7 @@ export function ChoosePlan() {
             <div className="flex items-center gap-3">
               <div className="flex-1 flex items-center justify-between">
                 <div className="bg-gradient-to-r from-slate-100/20 to-white/20 px-3 py-0.5 rounded-xl flex items-center gap-1.5">
-                  <div className="w-3.5 h-4.5 text-xs">💡</div>
+                  <Image src="/icon.svg" alt="Plan icon" width={14} height={18} className="w-3.5 h-4.5" />
                   <p className="font-satoshi font-bold text-base leading-6 text-black">
                     Pro
                   </p>
@@ -176,15 +178,10 @@ export function ChoosePlan() {
       </div>
 
       {/* Continue Button */}
-      <button
+      <ContinueButton
         onClick={handleContinue}
-        className="bg-carbon hover:bg-carbon/90 text-white font-sora font-extrabold text-base uppercase px-8 h-12 rounded-[48px] flex items-center justify-center gap-2 transition-colors"
-      >
-        Continue
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </button>
+        disabled={!selectedPlan}
+      />
     </div>
   );
 }

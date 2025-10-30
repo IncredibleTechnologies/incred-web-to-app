@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { BackButton } from "../back-button";
+import { ContinueButton } from "../continue-button";
 import { useOnboarding } from "@/contexts/onboarding-context";
 
 export function CreditCards() {
@@ -13,6 +14,7 @@ export function CreditCards() {
     selectedCards,
     setSelectedCards,
     setMinimumPayoffSimulation,
+    setCustomPayoffSimulation1x,
     setCustomPayoffSimulation1_5x,
     setCustomPayoffSimulation2x,
   } = useOnboarding();
@@ -89,10 +91,22 @@ export function CreditCards() {
       const minPayoffSimulation = await minPayoffResponse.json();
       setMinimumPayoffSimulation(minPayoffSimulation);
 
-      // Now call simulate-custom-payoff for 1.5x and 2x in parallel
+      // Now call simulate-custom-payoff for 1x, 1.5x and 2x in parallel
       const minPayment = minPayoffSimulation.minimum_payment;
 
-      const [response1_5x, response2x] = await Promise.all([
+      const [response1x, response1_5x, response2x] = await Promise.all([
+        fetch("https://api.getincredible.com/user/simulate-custom-payoff", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            accept: "application/json",
+          },
+          body: JSON.stringify({
+            cards,
+            monthly_payment: Math.round(minPayment),
+            strategy: "AVALANCHE",
+          }),
+        }),
         fetch("https://api.getincredible.com/user/simulate-custom-payoff", {
           method: "POST",
           headers: {
@@ -119,11 +133,13 @@ export function CreditCards() {
         }),
       ]);
 
-      const [simulation1_5x, simulation2x] = await Promise.all([
+      const [simulation1x, simulation1_5x, simulation2x] = await Promise.all([
+        response1x.json(),
         response1_5x.json(),
         response2x.json(),
       ]);
 
+      setCustomPayoffSimulation1x(simulation1x);
       setCustomPayoffSimulation1_5x(simulation1_5x);
       setCustomPayoffSimulation2x(simulation2x);
 
@@ -241,35 +257,12 @@ export function CreditCards() {
       </div>
 
       {/* Continue Button */}
-      <button
+      <ContinueButton
         onClick={handleContinue}
-        disabled={selectedCount === 0 || isLoading}
-        className="bg-carbon hover:bg-carbon/90 text-white font-sora font-extrabold text-base uppercase px-8 h-12 rounded-[48px] flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isLoading ? (
-          "Loading..."
-        ) : (
-          <>
-            Continue with {selectedCount}{" "}
-            {selectedCount === 1 ? "card" : "cards"}
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M9 18L15 12L9 6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </>
-        )}
-      </button>
+        disabled={selectedCount === 0}
+        isLoading={isLoading}
+        text={`Continue with ${selectedCount} ${selectedCount === 1 ? "card" : "cards"}`}
+      />
     </div>
   );
 }

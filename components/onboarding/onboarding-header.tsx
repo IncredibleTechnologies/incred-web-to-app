@@ -6,7 +6,10 @@ interface OnboardingHeaderProps {
   totalSteps: number;
 }
 
-export function OnboardingHeader({ currentStep, totalSteps }: OnboardingHeaderProps) {
+export function OnboardingHeader({
+  currentStep,
+  totalSteps,
+}: OnboardingHeaderProps) {
   const progressPercentage = (currentStep / totalSteps) * 100;
 
   return (
@@ -36,9 +39,14 @@ export function OnboardingHeader({ currentStep, totalSteps }: OnboardingHeaderPr
         </Link>
 
         {/* Help Link - visible on mobile */}
-        <p className="font-satoshi font-medium text-sm md:text-base leading-6 text-carbon whitespace-nowrap md:hidden">
-          Having trouble? <span className="font-black underline cursor-pointer">Get Help</span>
-        </p>
+        <a href="https://help.getincredible.com" target="_blank">
+          <p className="font-satoshi font-medium text-sm md:text-base leading-6 text-carbon whitespace-nowrap md:hidden">
+            Having trouble?{" "}
+            <span className="font-black underline cursor-pointer">
+              Get Help
+            </span>
+          </p>
+        </a>
       </div>
 
       {/* Progress Bar - moves to bottom on mobile */}
@@ -55,9 +63,12 @@ export function OnboardingHeader({ currentStep, totalSteps }: OnboardingHeaderPr
       </div>
 
       {/* Help Link - visible on desktop */}
-      <p className="hidden md:block font-satoshi font-medium text-base leading-6 text-carbon whitespace-nowrap">
-        Having trouble? <span className="font-black underline cursor-pointer">Get Help</span>
-      </p>
+      <a href="https://help.getincredible.com" target="_blank">
+        <p className="hidden md:block font-satoshi font-medium text-base leading-6 text-carbon whitespace-nowrap">
+          Having trouble?{" "}
+          <span className="font-black underline cursor-pointer">Get Help</span>
+        </p>
+      </a>
     </header>
   );
 }

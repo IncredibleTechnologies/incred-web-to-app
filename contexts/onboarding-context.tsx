@@ -52,6 +52,10 @@ interface OnboardingContextType {
   setMinimumPayoffSimulation: (
     simulation: MinimumPayoffSimulation | null
   ) => void;
+  customPayoffSimulation1x: CustomPayoffSimulation | null;
+  setCustomPayoffSimulation1x: (
+    simulation: CustomPayoffSimulation | null
+  ) => void;
   customPayoffSimulation1_5x: CustomPayoffSimulation | null;
   setCustomPayoffSimulation1_5x: (
     simulation: CustomPayoffSimulation | null
@@ -84,6 +88,8 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
   const [minimumPayoffSimulation, setMinimumPayoffSimulation] =
     useState<MinimumPayoffSimulation | null>(null);
+  const [customPayoffSimulation1x, setCustomPayoffSimulation1x] =
+    useState<CustomPayoffSimulation | null>(null);
   const [customPayoffSimulation1_5x, setCustomPayoffSimulation1_5x] =
     useState<CustomPayoffSimulation | null>(null);
   const [customPayoffSimulation2x, setCustomPayoffSimulation2x] =
@@ -103,6 +109,8 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         setSelectedCards,
         minimumPayoffSimulation,
         setMinimumPayoffSimulation,
+        customPayoffSimulation1x,
+        setCustomPayoffSimulation1x,
         customPayoffSimulation1_5x,
         setCustomPayoffSimulation1_5x,
         customPayoffSimulation2x,
