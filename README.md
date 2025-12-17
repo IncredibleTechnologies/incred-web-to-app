@@ -1,12 +1,12 @@
 # Incredible Web to App 🚀
 
-### Boilerplate for React TypeScript projects using Next.js, shadcn/ui, Tailwind and Firebase on Vercel!
+### Boilerplate for React TypeScript projects using Next.js, shadcn/ui, Tailwind and Firebase on Netlify!
 
 > Now using Next.js app router!
 
-This stack is 🔥 because projects can be built and deployed for free until you get to higher tiers within Vercel/Firebase which only happens once you get lots of DAUs.
+This stack is 🔥 because projects can be built and deployed for free until you get to higher tiers within Netlify/Firebase which only happens once you get lots of DAUs.
 
-- **Ve**rcel for cloud and automated deployments
+- **Ne**tlify for cloud and automated deployments
 - **Ne**xt.js for better React
 - **Fi**rebase for auth and database (Firestore)
 - **Sh**adcn and Tailwind for UI/styling
@@ -29,6 +29,6 @@ The following is only needed if you want to use `firebase/admin` (not part of th
 ### Notes
 
 - You can use `api/test.ts` to stringify your private key so you can use in in the environment
-- You need to define the same `FIREBASE_ADMIN_SDK` environment variable in Vercel
+- You need to define the same `FIREBASE_ADMIN_SDK` environment variable in Netlify
 
 **Created by [⬡ Enesien Software](https://enesien.com)**
