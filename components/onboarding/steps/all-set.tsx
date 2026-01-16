@@ -12,10 +12,10 @@ export function AllSet() {
     <div className="flex flex-col items-center gap-8 max-w-[600px] w-full text-center">
       {/* Header */}
       <div className="flex flex-col gap-4">
-        <h1 className="font-sora font-extrabold text-4xl leading-tight text-black">
+        <h1 className="font-sora font-extrabold text-2xl sm:text-4xl leading-tight text-black">
           You&apos;re all set!
         </h1>
-        <p className="font-satoshi font-medium text-lg leading-7 text-carbon">
+        <p className="font-satoshi font-medium text-base sm:text-lg leading-7 text-carbon">
           Download Incredible to complete your Plan.
         </p>
       </div>
@@ -27,7 +27,7 @@ export function AllSet() {
         </p>
 
         {/* QR Code */}
-        <div className="relative w-[207px] h-[207px]">
+        <div className="relative w-40 h-40 sm:w-[207px] sm:h-[207px]">
           <Image
             src="/qr-code.svg"
             alt="Download Incredible QR Code"

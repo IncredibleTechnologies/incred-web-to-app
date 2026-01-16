@@ -5,7 +5,7 @@ export default function OnboardingCreditCards() {
   return (
     <>
       <OnboardingHeader currentStep={2} totalSteps={9} />
-      <div className="flex-1 flex items-center justify-center w-full">
+      <div className="flex-1 flex items-center justify-center w-full page-transition">
         <CreditCards />
       </div>
     </>

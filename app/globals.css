@@ -69,6 +69,16 @@
   }
 }
 
+/* Page transition - slide in from right */
+@keyframes page-slide-right {
+  from { transform: translateX(20px); }
+  to { transform: translateX(0); }
+}
+
+.page-transition {
+  animation: page-slide-right 0.2s ease-out;
+}
+
 @layer base {
   * {
     @apply border-border;

@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { BackButton } from "../back-button";
 import { ContinueButton } from "../continue-button";
 import { useOnboarding } from "@/contexts/onboarding-context";
 
@@ -34,7 +33,6 @@ export function ChoosePlan() {
     <div className="flex flex-col gap-8 max-w-[600px] w-full">
       {/* Header */}
       <div className="flex flex-col gap-4">
-        <BackButton />
         <h1 className="font-sora font-bold text-xl leading-7 text-black">
           Choose your Plan
         </h1>
@@ -118,8 +116,8 @@ export function ChoosePlan() {
         </div>
 
         {/* Features Comparison */}
-        <div className="flex gap-3">
-          <div className="flex-1 flex flex-col gap-3 py-3 font-satoshi text-base leading-6">
+        <div className="flex gap-2 sm:gap-3">
+          <div className="flex-1 flex flex-col gap-2 sm:gap-3 py-3 font-satoshi text-xs sm:text-base leading-6">
             <p className="font-medium text-slate-100">What&apos;s included?</p>
             {features.map((feature, index) => (
               <p key={index} className="font-bold text-carbon">
@@ -127,34 +125,34 @@ export function ChoosePlan() {
               </p>
             ))}
           </div>
-          <div className="flex flex-col gap-3 items-center justify-center p-3">
-            <p className="font-satoshi font-bold text-base leading-6 text-carbon">Plus</p>
-            <div className="bg-neon-lime rounded-full w-6 h-6 flex items-center justify-center">
+          <div className="flex flex-col gap-2 sm:gap-3 items-center justify-center p-2 sm:p-3">
+            <p className="font-satoshi font-bold text-xs sm:text-base leading-6 text-carbon">Plus</p>
+            <div className="bg-neon-lime rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 7L6 11L12 3" stroke="#142a31" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <div className="bg-neon-lime rounded-full w-6 h-6 flex items-center justify-center">
+            <div className="bg-neon-lime rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 7L6 11L12 3" stroke="#142a31" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <div className="bg-neon-lime rounded-full w-6 h-6 flex items-center justify-center">
+            <div className="bg-neon-lime rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 7L6 11L12 3" stroke="#142a31" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <div className="w-6 h-6 flex items-center justify-center">
+            <div className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center">
               <div className="w-3 h-0.5 bg-slate-100" />
             </div>
-            <div className="w-6 h-6 flex items-center justify-center">
+            <div className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center">
               <div className="w-3 h-0.5 bg-slate-100" />
             </div>
           </div>
-          <div className="bg-slate-100/5 rounded-2xl flex flex-col gap-3 items-center justify-center p-3">
-            <p className="font-satoshi font-bold text-base leading-6 text-carbon">Pro</p>
+          <div className="bg-slate-100/5 rounded-2xl flex flex-col gap-2 sm:gap-3 items-center justify-center p-2 sm:p-3">
+            <p className="font-satoshi font-bold text-xs sm:text-base leading-6 text-carbon">Pro</p>
             {[1, 2, 3, 4, 5].map((_, index) => (
-              <div key={index} className="bg-neon-lime rounded-full w-6 h-6 flex items-center justify-center">
+              <div key={index} className="bg-neon-lime rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M2 7L6 11L12 3" stroke="#142a31" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>

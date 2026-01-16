@@ -5,7 +5,7 @@ export default function OnboardingPlanReview() {
   return (
     <>
       <OnboardingHeader currentStep={6} totalSteps={9} />
-      <div className="flex-1 flex items-center justify-center w-full">
+      <div className="flex-1 flex items-center justify-center w-full page-transition">
         <PlanReview />
       </div>
     </>

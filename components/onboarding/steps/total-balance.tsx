@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { BackButton } from "../back-button";
 import { ContinueButton } from "../continue-button";
 import { useOnboarding, CreditCardOption } from "@/contexts/onboarding-context";
 
@@ -220,7 +219,6 @@ export function TotalBalance() {
     <div className="flex flex-col gap-8 max-w-[600px] w-full">
       {/* Header */}
       <div className="flex flex-col gap-4">
-        <BackButton />
         <h1 className="font-sora font-bold text-xl leading-7 text-black">
           What&apos;s your total credit card balance?
         </h1>
@@ -235,7 +233,7 @@ export function TotalBalance() {
 
         {/* Balance Adjuster */}
         <div className="flex flex-col gap-2">
-          <div className="border-2 border-[#e7e5e1] rounded-[40px] h-[68px] bg-white flex items-center px-1">
+          <div className="border-2 border-[#e7e5e1] rounded-[40px] h-14 sm:h-[68px] bg-white flex items-center px-1">
             <button
               onClick={decreaseBalance}
               className="bg-[rgba(212,208,201,0.5)] rounded-3xl w-10 h-10 flex items-center justify-center hover:bg-[rgba(212,208,201,0.7)] transition-colors"
@@ -246,7 +244,7 @@ export function TotalBalance() {
 
             {isEditing ? (
               <div className="flex-1 flex items-center justify-center">
-                <span className="font-sora font-extrabold text-[32px] leading-normal text-black">
+                <span className="font-sora font-extrabold text-2xl sm:text-[32px] leading-normal text-black">
                   £
                 </span>
                 <input
@@ -257,14 +255,14 @@ export function TotalBalance() {
                   onChange={handleInputChange}
                   onBlur={handleInputBlur}
                   onKeyDown={handleInputKeyDown}
-                  className="font-sora font-extrabold text-[32px] leading-normal text-black text-center bg-transparent outline-none w-[200px]"
+                  className="font-sora font-extrabold text-2xl sm:text-[32px] leading-normal text-black text-center bg-transparent outline-none w-[140px] sm:w-[200px]"
                   placeholder="0"
                 />
               </div>
             ) : (
               <p
                 onClick={handleBalanceClick}
-                className="flex-1 text-center font-sora font-extrabold text-[32px] leading-normal text-black cursor-pointer hover:opacity-70 transition-opacity"
+                className="flex-1 text-center font-sora font-extrabold text-2xl sm:text-[32px] leading-normal text-black cursor-pointer hover:opacity-70 transition-opacity"
               >
                 £{balance.toLocaleString()}
               </p>
@@ -312,8 +310,8 @@ export function TotalBalance() {
             />
             {/* Slider knob */}
             <div
-              className="absolute top-1/2 -translate-y-1/2 w-[26px] h-[26px] bg-white border-2 border-black rounded-full shadow-md transition-all pointer-events-none z-20"
-              style={{ left: `calc(${sliderPercentage}% - 13px)` }}
+              className="absolute top-1/2 -translate-y-1/2 w-8 h-8 bg-white border-2 border-black rounded-full shadow-md transition-all pointer-events-none z-20"
+              style={{ left: `calc(${sliderPercentage}% - 16px)` }}
             />
           </div>
 

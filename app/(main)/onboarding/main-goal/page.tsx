@@ -5,7 +5,7 @@ export default function OnboardingMainGoal() {
   return (
     <>
       <OnboardingHeader currentStep={5} totalSteps={9} />
-      <div className="flex-1 flex items-center justify-center w-full">
+      <div className="flex-1 flex items-center justify-center w-full page-transition">
         <MainGoal />
       </div>
     </>

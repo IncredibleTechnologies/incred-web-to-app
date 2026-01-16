@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { BackButton } from "../back-button";
 import { ContinueButton } from "../continue-button";
 import { useOnboarding } from "@/contexts/onboarding-context";
 
@@ -87,7 +86,6 @@ export function Savings() {
     <div className="flex flex-col gap-8 max-w-[600px] w-full">
       {/* Header */}
       <div className="flex flex-col gap-4">
-        <BackButton />
         <h1 className="font-sora font-bold text-xl leading-7 text-black">
           Here&apos;s how much you could save!
         </h1>
@@ -102,7 +100,7 @@ export function Savings() {
         {/* Savings Card */}
         <div className="flex flex-col gap-4">
           <div className="border-2 border-neon-lime bg-neon-lime/10 rounded-3xl p-5 pt-6 pb-8 flex flex-col gap-2 items-center">
-            <p className="font-sora font-extrabold text-[32px] leading-normal text-carbon text-center">
+            <p className="font-sora font-extrabold text-2xl sm:text-[32px] leading-normal text-carbon text-center">
               £{interestSaved.toLocaleString()} 🎉
             </p>
             <div className="flex flex-col gap-3 items-center">
