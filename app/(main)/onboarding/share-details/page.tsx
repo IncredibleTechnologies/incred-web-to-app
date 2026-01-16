@@ -5,7 +5,7 @@ export default function OnboardingShareDetails() {
   return (
     <>
       <OnboardingHeader currentStep={8} totalSteps={9} />
-      <div className="flex-1 flex items-center justify-center w-full">
+      <div className="flex-1 flex items-center justify-center w-full page-transition">
         <ShareDetails />
       </div>
     </>

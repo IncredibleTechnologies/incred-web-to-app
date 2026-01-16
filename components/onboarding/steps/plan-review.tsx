@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { BackButton } from "../back-button";
 import { ContinueButton } from "../continue-button";
 import { useOnboarding } from "@/contexts/onboarding-context";
 
@@ -92,7 +91,6 @@ export function PlanReview() {
     <div className="flex flex-col gap-8 max-w-[600px] w-full">
       {/* Header */}
       <div className="flex flex-col gap-4">
-        <BackButton />
         <h1 className="font-sora font-bold text-xl leading-7 text-black">
           Your Plan to pay-off your cards
         </h1>
@@ -167,7 +165,7 @@ export function PlanReview() {
           <p className="font-satoshi font-bold text-base leading-6 text-carbon text-center">
             You&apos;ll save an estimated*
           </p>
-          <p className="font-sora font-extrabold text-[32px] leading-normal text-carbon text-center">
+          <p className="font-sora font-extrabold text-2xl sm:text-[32px] leading-normal text-carbon text-center">
             £{interestSaved.toLocaleString()} 🎉
           </p>
           <div className="bg-neon-lime px-3 py-1 rounded-[14px]">

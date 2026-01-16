@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { BackButton } from "../back-button";
 import { ContinueButton } from "../continue-button";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useAuth } from "reactfire";
@@ -115,7 +114,6 @@ export function ShareDetails() {
     <div className="flex flex-col gap-8 max-w-[600px] w-full">
       {/* Header */}
       <div className="flex flex-col gap-4">
-        <BackButton />
         <h1 className="font-sora font-bold text-xl leading-7 text-black">
           Almost there!
         </h1>
@@ -128,8 +126,8 @@ export function ShareDetails() {
       {/* Form */}
       <div className="flex flex-col gap-3">
         {/* Name Fields */}
-        <div className="flex gap-4">
-          <div className="flex-1 flex flex-col gap-1 h-[85px]">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+          <div className="flex-1 flex flex-col gap-1 min-h-[75px] sm:min-h-[85px]">
             <label className="font-satoshi font-medium text-[13px] leading-[18px] text-slate-100">
               First name
             </label>
@@ -144,7 +142,7 @@ export function ShareDetails() {
             />
           </div>
 
-          <div className="flex-1 flex flex-col gap-1 h-[85px]">
+          <div className="flex-1 flex flex-col gap-1 min-h-[75px] sm:min-h-[85px]">
             <label className="font-satoshi font-medium text-[13px] leading-[18px] text-slate-100">
               Last name
             </label>
@@ -161,7 +159,7 @@ export function ShareDetails() {
         </div>
 
         {/* Email Field */}
-        <div className="flex flex-col gap-1 h-[85px]">
+        <div className="flex flex-col gap-1 min-h-[75px] sm:min-h-[85px]">
           <label className="font-satoshi font-medium text-[13px] leading-[18px] text-slate-100">
             Email address
           </label>
@@ -177,14 +175,14 @@ export function ShareDetails() {
         </div>
 
         {/* Password Field */}
-        <div className="flex flex-col gap-1 h-[85px]">
+        <div className="flex flex-col gap-1 min-h-[75px] sm:min-h-[85px]">
           <label className="font-satoshi font-medium text-[13px] leading-[18px] text-slate-100">
             Password
           </label>
           <input
             type="password"
             value={formData.password}
-            placeholder="At least 8 characters"
+            placeholder="Must be 8 characters, 1 capital letter and 1 number"
             onChange={(e) =>
               setFormData({ ...formData, password: e.target.value })
             }
@@ -192,7 +190,7 @@ export function ShareDetails() {
           />
         </div>
         {/* Phone Field */}
-        <div className="flex flex-col gap-1 h-[85px]">
+        <div className="flex flex-col gap-1 min-h-[75px] sm:min-h-[85px]">
           <label className="font-satoshi font-medium text-[13px] leading-[18px] text-slate-100">
             Phone number
           </label>

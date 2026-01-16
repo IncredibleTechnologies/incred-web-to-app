@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { BackButton } from "../back-button";
 import { ContinueButton } from "../continue-button";
 import { useOnboarding } from "@/contexts/onboarding-context";
 
@@ -157,14 +156,13 @@ export function CreditCards() {
     <div className="flex flex-col gap-8 max-w-[600px] w-full">
       {/* Header */}
       <div className="flex flex-col gap-4">
-        <BackButton />
         <h1 className="font-sora font-bold text-xl leading-7 text-black">
           What cards do you have a balance on?
         </h1>
       </div>
 
       {/* Card Content */}
-      <div className="bg-white border-2 border-[#fbfbfc] rounded-3xl p-8 h-[565px] overflow-hidden relative">
+      <div className="bg-white border-2 border-[#fbfbfc] rounded-3xl p-4 sm:p-8 h-[400px] sm:h-[480px] md:h-[565px] overflow-hidden relative">
         <div className="flex flex-col gap-6 h-full">
           {/* Search Input */}
           <div className="bg-white border-2 border-slate-100/20 rounded-2xl px-4 py-3 flex items-center gap-1">

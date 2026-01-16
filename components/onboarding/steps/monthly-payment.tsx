@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { BackButton } from "../back-button";
 import { ContinueButton } from "../continue-button";
 import { useOnboarding } from "@/contexts/onboarding-context";
 
@@ -95,7 +94,6 @@ export function MonthlyPayment() {
     <div className="flex flex-col gap-8 max-w-[600px] w-full">
       {/* Header */}
       <div className="flex flex-col gap-4">
-        <BackButton />
         <h1 className="font-sora font-bold text-xl leading-7 text-black">
           How much can pay each month?
         </h1>
@@ -116,13 +114,13 @@ export function MonthlyPayment() {
             {/* Recommended Badge */}
             {option.recommended && (
               <div
-                className={`absolute top-3 right-3 px-3 py-0.5 rounded-xl ${
+                className={`absolute top-2 right-2 sm:top-3 sm:right-3 px-2 sm:px-3 py-0.5 rounded-lg sm:rounded-xl ${
                   selectedOption === option.id
                     ? "bg-neon-lime"
                     : "bg-slate-100/20"
                 }`}
               >
-                <p className="font-satoshi font-bold text-base leading-6 text-black">
+                <p className="font-satoshi font-bold text-xs sm:text-base leading-6 text-black">
                   Recommended
                 </p>
               </div>

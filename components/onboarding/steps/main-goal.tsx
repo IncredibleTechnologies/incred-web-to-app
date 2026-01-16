@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { BackButton } from "../back-button";
 import { ContinueButton } from "../continue-button";
 import { useOnboarding } from "@/contexts/onboarding-context";
 
@@ -38,7 +37,6 @@ export function MainGoal() {
     <div className="flex flex-col gap-8 max-w-[600px] w-full">
       {/* Header */}
       <div className="flex flex-col gap-4">
-        <BackButton />
         <h1 className="font-sora font-bold text-xl leading-7 text-black">
           What&apos;s your main goal?
         </h1>

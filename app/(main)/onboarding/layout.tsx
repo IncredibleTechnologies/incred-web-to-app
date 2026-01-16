@@ -9,7 +9,7 @@ export default function OnboardingLayout({
   return (
     <OnboardingProvider>
       <div className="min-h-screen bg-cloud flex flex-col">
-        <main className="flex-1 flex flex-col items-center overflow-y-auto px-4 py-4">
+        <main className="flex-1 flex flex-col items-center overflow-y-auto px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8">
           {children}
         </main>
         <OnboardingFooter />
